@@ -1,1128 +1,457 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Bookie Bandit | The #1 AI Sports Betting Bot | Automate Your Edge</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* =========================================
-   CORE SETUP & CSS VARIABLES
-   ========================================= */
-:root {
-    --bg-void: #050505;
-    --bg-panel: #0f0f11;
-    --bandit-red: #e11d48;
-    --bandit-red-dim: rgba(225, 29, 72, 0.15);
-    --cash-green: #10b981;
-    --cash-green-dim: rgba(16, 185, 129, 0.15);
-    --text-main: #a1a1aa;
-    --text-bright: #ffffff;
-    --glass-border: rgba(255, 255, 255, 0.05);
-    --red-glow: 0 0 20px rgba(225, 29, 72, 0.5);
+:root{
+  --obs:#030508;--ink:#060A10;--slab:#0A1018;--slab2:#0F1820;
+  --cyan:#00F5FF;--c2:#22D3EE;--c3:#67E8F9;--c4:#A5F3FC;
+  --grn:#00FF9F;--wh:#E8FFFE;
+  --dim:rgba(232,255,254,0.55);
+  --bord:rgba(0,245,255,0.2);--bord2:rgba(232,255,254,0.06);
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
-body { 
-    background-color: var(--bg-void); 
-    color: var(--text-main); 
-    font-family: 'Inter', sans-serif; 
-    overflow-x: hidden;
-}
-
-/* =========================================
-   TYPOGRAPHY UTILITIES
-   ========================================= */
-.font-display { font-family: 'Teko', sans-serif; text-transform: uppercase; }
-.font-mono { font-family: 'Space Mono', monospace; }
-
-.text-gradient-red {
-    background: linear-gradient(135deg, #ffffff 0%, var(--bandit-red) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% auto;
-    animation: shine 4s linear infinite;
-}
-
-/* =========================================
-   BACKGROUNDS & TEXTURES
-   ========================================= */
-.cyber-grid {
-    background-size: 50px 50px;
-    background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-}
-
-.glow-orb-red {
-    position: absolute;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, var(--bandit-red-dim) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: 0;
-    pointer-events: none;
-}
-.glow-orb-green {
-    position: absolute;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, var(--cash-green-dim) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: 0;
-    pointer-events: none;
-}
-
-/* =========================================
-   CUSTOM SCROLLBAR
-   ========================================= */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--bg-void); }
-::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--bandit-red); }
-
-/* =========================================
-   CUSTOM CURSOR (Crosshair)
-   ========================================= */
-.cursor-dot, .cursor-crosshair {
-    position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-    border-radius: 50%; z-index: 9999; pointer-events: none;
-}
-.cursor-dot {
-    width: 4px; height: 4px; background-color: var(--bandit-red);
-    box-shadow: var(--red-glow);
-}
-.cursor-crosshair {
-    width: 40px; height: 40px;
-    border: 1px solid rgba(225, 29, 72, 0.4);
-    transition: width 0.2s, height 0.2s, border-color 0.2s;
-}
-.cursor-crosshair::before, .cursor-crosshair::after {
-    content: ''; position: absolute; background: var(--bandit-red); opacity: 0.5;
-}
-.cursor-crosshair::before { top: 50%; left: -5px; right: -5px; height: 1px; transform: translateY(-50%); }
-.cursor-crosshair::after { left: 50%; top: -5px; bottom: -5px; width: 1px; transform: translateX(-50%); }
-
-.cursor-hover .cursor-crosshair {
-    width: 60px; height: 60px;
-    border-color: var(--bandit-red);
-    transform: translate(-50%, -50%) rotate(45deg);
-    background: rgba(225, 29, 72, 0.05);
-}
-
-/* =========================================
-   KEYFRAME ANIMATIONS
-   ========================================= */
-@keyframes shine { to { background-position: 200% center; } }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-@keyframes slide-ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-@keyframes scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(1000%); } }
-
-/* =========================================
-   UTILITY & COMPONENT CLASSES
-   ========================================= */
-.ticker-wrap { animation: slide-ticker 30s linear infinite; }
-.ticker-wrap:hover { animation-play-state: paused; }
-.floating { animation: float 6s ease-in-out infinite; }
-
-.scan-line {
-    position: absolute; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--bandit-red), transparent);
-    animation: scanline 3s linear infinite;
-    opacity: 0.4; pointer-events: none; z-index: 10;
-}
-
-.glass-panel {
-    background: rgba(15, 15, 17, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-}
-.card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.card-hover:hover {
-    transform: translateY(-8px);
-    border-color: var(--bandit-red);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(225, 29, 72, 0.1);
-}
-
-/* Bandit Button Style */
-.btn-bandit {
-    background: var(--bandit-red);
-    color: white;
-    border: none;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    transition: all 0.3s ease;
-    box-shadow: var(--red-glow);
-    text-transform: uppercase;
-}
-.btn-bandit::before {
-    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: #be123c;
-    z-index: -1; transition: all 0.4s ease;
-}
-.btn-bandit:hover::before { left: 0; }
-.btn-bandit:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(225, 29, 72, 0.7); }
-
-/* SCROLL REVEAL FRAMEWORK */
-.reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-.reveal.active { opacity: 1; transform: translateY(0); }
-.delay-100 { transition-delay: 0.1s; }
-.delay-200 { transition-delay: 0.2s; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;cursor:none;}
+html{scroll-behavior:smooth;}
+body{background:var(--obs);color:var(--dim);font-family:"Chakra Petch",sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+.mn{font-family:"IBM Plex Mono",monospace;}
+.ct{background:linear-gradient(135deg,#00B4D8,#00F5FF,#22D3EE,#67E8F9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.gt{background:linear-gradient(135deg,#059669,#00FF9F,#34D399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.cyber-mesh{background:radial-gradient(ellipse 70% 60% at 0% 0%,rgba(0,245,255,0.07) 0%,transparent 70%),radial-gradient(ellipse 50% 70% at 100% 80%,rgba(0,255,159,0.05) 0%,transparent 70%),var(--obs);}
+.hex-bg{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='48'%3E%3Cpath d='M28 1 L55 16.5 L55 31.5 L28 47 L1 31.5 L1 16.5Z' fill='none' stroke='rgba(0,245,255,0.04)' stroke-width='1'/%3E%3C/svg%3E");background-size:56px 48px;}
+@keyframes scan{0%{transform:translateY(-100%);}100%{transform:translateY(2000px);}}
+.scanline{position:absolute;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);animation:scan 4s linear infinite;opacity:.35;pointer-events:none;z-index:10;}
+#cdot{position:fixed;width:4px;height:4px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--cyan),0 0 20px var(--cyan);}
+#cring{position:fixed;width:36px;height:36px;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .2s,height .2s;border:1px solid rgba(0,245,255,0.4);}
+#cring::before,#cring::after{content:"";position:absolute;background:var(--cyan);opacity:.4;}
+#cring::before{top:50%;left:-6px;right:-6px;height:1px;transform:translateY(-50%);}
+#cring::after{left:50%;top:-6px;bottom:-6px;width:1px;transform:translateX(-50%);}
+body.hov #cring{width:56px;height:56px;border-color:var(--cyan);transform:translate(-50%,-50%) rotate(45deg);}
+body.hov #cdot{background:white;box-shadow:0 0 15px white;}
+.glass{background:linear-gradient(145deg,rgba(10,16,24,0.8),rgba(6,10,16,0.95));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bord2);}
+.btn-c{background:var(--cyan);color:#030508;font-weight:700;box-shadow:0 0 30px rgba(0,245,255,0.4);transition:all .3s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden;}
+.btn-c::after{content:"";position:absolute;top:0;left:-120%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transform:skewX(-20deg);transition:left .8s ease;pointer-events:none;}
+.btn-c:hover{background:#22D3EE;transform:translateY(-3px);box-shadow:0 0 50px rgba(0,245,255,0.65);}
+.btn-c:hover::after{left:160%;}
+.btn-g{border:1px solid rgba(0,245,255,0.3);color:var(--wh);background:rgba(0,245,255,0.04);transition:all .3s;}
+.btn-g:hover{border-color:var(--cyan);background:rgba(0,245,255,0.1);transform:translateY(-2px);}
+.neon{animation:nc 3s ease-in-out infinite;}
+@keyframes nc{0%,100%{box-shadow:0 0 8px rgba(0,245,255,0.5),0 0 20px rgba(0,245,255,0.25);}50%{box-shadow:0 0 16px rgba(0,245,255,0.8),0 0 50px rgba(0,245,255,0.4),0 0 90px rgba(0,245,255,0.15);}}
+.pd{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:pk 2s infinite;}
+@keyframes pk{0%{box-shadow:0 0 0 0 rgba(0,245,255,.7);}70%{box-shadow:0 0 0 10px rgba(0,245,255,0);}100%{box-shadow:0 0 0 0 rgba(0,245,255,0);}}
+.gd{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:gk 2s infinite;}
+@keyframes gk{0%{box-shadow:0 0 0 0 rgba(0,255,159,.7);}70%{box-shadow:0 0 0 10px rgba(0,255,159,0);}100%{box-shadow:0 0 0 0 rgba(0,255,159,0);}}
+@keyframes lr{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tk{animation:lr 28s linear infinite;}
+@keyframes fu{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fr{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fl{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+.rv{opacity:0;}.rv.in{animation:fu .75s cubic-bezier(0.16,1,0.3,1) forwards;}
+.rvr{opacity:0;}.rvr.in{animation:fr .75s cubic-bezier(0.16,1,0.3,1) forwards;}
+.rvl{opacity:0;}.rvl.in{animation:fl .75s cubic-bezier(0.16,1,0.3,1) forwards;}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;transition:all .4s;}
+nav.on{background:rgba(3,5,8,.97);backdrop-filter:blur(32px);border-bottom:1px solid rgba(0,245,255,0.12);}
+#mnav{transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);}
+#mnav.open{transform:translateX(0);}
+.trow{border-bottom:1px solid rgba(232,255,254,0.05);transition:background .2s;}
+.trow:hover{background:rgba(0,245,255,0.03);}
+.card{background:var(--slab);border:1px solid var(--bord2);position:relative;overflow:hidden;transition:all .45s cubic-bezier(0.16,1,0.3,1);}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--cyan),var(--grn),transparent);transform:scaleX(0);transition:transform .5s cubic-bezier(0.16,1,0.3,1);}
+.card:hover{border-color:rgba(0,245,255,0.3);transform:translateY(-6px);}
+.card:hover::before{transform:scaleX(1);}
+.fb{max-height:0;overflow:hidden;transition:max-height .5s ease;}
+.fb.open{max-height:600px;}
+.fi{transition:transform .35s;}
+.fi.open{transform:rotate(45deg);}
+.ttb{position:relative;border-radius:18px;overflow:hidden;background:#020508;box-shadow:0 0 0 1px rgba(0,245,255,0.18),0 20px 60px rgba(0,0,0,0.9);}
+.ttb::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:18px;background:linear-gradient(180deg,rgba(0,245,255,0.05) 0%,transparent 20%,transparent 80%,rgba(0,0,0,0.5) 100%);z-index:2;}
+.ttb iframe{display:block;border:none!important;}
+#mx{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-3;opacity:.025;pointer-events:none;}
+.cl{height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--c2),var(--cyan),transparent);}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--obs);}::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:3px;}
+@keyframes bl{0%,100%{opacity:1;}50%{opacity:0;}}
+.blk{animation:bl 1s step-end infinite;}
 </style>
 </head>
-<body class="relative hover-target-wrapper">
+<body>
+<div id="cdot"></div><div id="cring"></div>
+<canvas id="mx"></canvas>
+<div class="cyber-mesh fixed inset-0 z-[-4]"></div>
+<div class="hex-bg fixed inset-0 z-[-3]" style="mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,black 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,black 20%,transparent 80%);"></div>
 
-<div class="cursor-dot" id="cursor-dot"></div>
-<div class="cursor-crosshair" id="cursor-crosshair"></div>
-
-<div class="fixed inset-0 cyber-grid z-[-2]"></div>
-<div class="fixed inset-0 bg-gradient-to-b from-[#050505]/50 via-[#050505]/90 to-[#050505] z-[-1]"></div>
-
-<div id="system-logs-bar" class="w-full bg-[#8a0303] text-white font-mono text-[10px] py-1.5 px-4 fixed top-0 z-[60] flex justify-between items-center border-b border-red-500/50 shadow-[0_0_15px_rgba(225,29,72,0.4)]">
-    <div class="flex items-center gap-3">
-        <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-        <span class="tracking-widest uppercase">System Logs: Auto-Saving Active</span>
-    </div>
-    <div class="hidden sm:flex items-center gap-6 opacity-90 tracking-widest uppercase">
-        <span>> API Latency: 12ms</span>
-        <span>> Scraping 50+ Books</span>
-        <span>> AI Status: <span class="text-green-400 font-bold">ONLINE</span></span>
-    </div>
+<!-- SYSBAR -->
+<div class="w-full py-1.5 px-5 flex justify-between items-center fixed top-0 z-[600]" style="background:rgba(0,245,255,0.06);border-bottom:1px solid rgba(0,245,255,0.15);">
+  <div class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full" style="background:var(--cyan);animation:pk 1.5s infinite;"></span><span class="mn text-[9px] uppercase tracking-[.22em]" style="color:rgba(0,245,255,0.7);">System Logs: Auto-Saving Active</span></div>
+  <div class="hidden sm:flex items-center gap-6 mn text-[9px] uppercase tracking-widest" style="color:rgba(232,255,254,0.3);"><span>API Latency: 12ms</span><span>Scraping 50+ Books</span><span>AI Status: <span style="color:#00FF9F;">ONLINE</span></span></div>
 </div>
 
-<nav id="navbar" class="fixed w-full z-40 transition-all duration-500 py-4 top-[28px] border-b border-transparent">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center glass-panel px-6 py-3 rounded-xl border border-[rgba(255,255,255,0.05)] shadow-lg">
-            
-            <a href="#" class="flex items-center gap-4 group no-underline hover-target">
-                <div class="w-12 h-12 border border-dashed border-gray-600 rounded flex items-center justify-center bg-[#0a0a0a] group-hover:border-[var(--bandit-red)] transition-colors">
-                    <span class="font-mono text-[9px] text-gray-500 uppercase tracking-widest group-hover:text-[var(--bandit-red)]">
-                        <img src="bookiebandit.avif">
-                    </span>
-                </div>
-                <div class="flex flex-col">
-                    <span class="font-display font-bold text-white text-3xl leading-none tracking-wide group-hover:text-[var(--bandit-red)] transition-colors">BOOKIE BANDIT</span>
-                    <span class="font-mono text-[9px] text-[var(--cash-green)] tracking-[0.3em] uppercase -mt-1">Automated EV Engine</span>
-                </div>
-            </a>
-
-            <div class="hidden lg:flex items-center gap-8">
-                <a href="#about" class="text-xs font-mono font-bold text-gray-400 hover:text-white transition-colors tracking-widest uppercase hover-target">The Protocol</a>
-                <a href="#features" class="text-xs font-mono font-bold text-gray-400 hover:text-white transition-colors tracking-widest uppercase hover-target">Arsenal</a>
-                <a href="#reviews" class="text-xs font-mono font-bold text-gray-400 hover:text-white transition-colors tracking-widest uppercase hover-target">Intel</a>
-                <a href="#pricing" class="text-xs font-mono font-bold text-gray-400 hover:text-white transition-colors tracking-widest uppercase hover-target">Access</a>
-            </div>
-
-            <div class="hidden lg:flex items-center gap-5">
-                <a href="https://whop.com/bookiebandit?a=digitalartlab" target="_blank" class="font-mono text-xs font-bold text-gray-400 hover:text-white transition-all hover-target uppercase tracking-widest">
-                    <i class="fa-solid fa-right-to-bracket mr-1"></i> Hub Login
-                </a>
-                <a href="#pricing" class="btn-bandit px-6 py-2.5 rounded font-display font-bold text-xl tracking-widest hover-target">
-                    GET THE BOT
-                </a>
-            </div>
-
-            <button id="menu-btn" class="lg:hidden text-[var(--bandit-red)] focus:outline-none text-2xl hover-target">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-        </div>
+<!-- NAV -->
+<nav id="nb" style="top:28px;">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 h-14 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3">
+      <div class="w-12 h-12 flex items-center justify-center overflow-hidden neon" style="border:1px solid rgba(0,245,255,0.4);background:rgba(0,245,255,0.06);">
+        <img src="bookiebandit.avif" alt="Bookie Bandit" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <span class="hidden w-full h-full items-center justify-center mn font-bold text-[9px] uppercase" style="color:var(--cyan);">BOT</span>
+      </div>
+      <div>
+        <div class="font-bold text-white uppercase tracking-widest" style="font-size:1.4rem;font-weight:700;letter-spacing:.08em;">BOOKIE BANDIT</div>
+        <div class="mn" style="font-size:.5rem;letter-spacing:.2em;color:var(--grn);opacity:.8;">AUTOMATED EV ENGINE</div>
+      </div>
+    </a>
+    <div class="hidden lg:flex items-center gap-8">
+      <a href="#about" class="mn text-xs uppercase tracking-widest" style="color:rgba(232,255,254,0.4);transition:color .2s;" onmouseover="this.style.color='#00F5FF'" onmouseout="this.style.color='rgba(232,255,254,0.4)'">The Protocol</a>
+      <a href="#features" class="mn text-xs uppercase tracking-widest" style="color:rgba(232,255,254,0.4);transition:color .2s;" onmouseover="this.style.color='#00F5FF'" onmouseout="this.style.color='rgba(232,255,254,0.4)'">Arsenal</a>
+      <a href="#reviews" class="mn text-xs uppercase tracking-widest" style="color:rgba(232,255,254,0.4);transition:color .2s;" onmouseover="this.style.color='#00F5FF'" onmouseout="this.style.color='rgba(232,255,254,0.4)'">Intel</a>
+      <a href="#pricing" class="mn text-xs uppercase tracking-widest" style="color:rgba(232,255,254,0.4);transition:color .2s;" onmouseover="this.style.color='#00F5FF'" onmouseout="this.style.color='rgba(232,255,254,0.4)'">Access</a>
     </div>
-
-    <div id="mobile-menu" class="lg:hidden absolute top-full left-4 right-4 mt-2 glass-panel hidden flex-col overflow-hidden rounded-xl border border-[var(--bandit-red)]/30">
-        <a href="#about" class="px-6 py-4 border-b border-[rgba(255,255,255,0.05)] text-gray-300 font-mono text-xs uppercase tracking-widest hover:text-[var(--bandit-red)]">The Protocol</a>
-        <a href="#features" class="px-6 py-4 border-b border-[rgba(255,255,255,0.05)] text-gray-300 font-mono text-xs uppercase tracking-widest hover:text-[var(--bandit-red)]">Arsenal</a>
-        <a href="#reviews" class="px-6 py-4 border-b border-[rgba(255,255,255,0.05)] text-gray-300 font-mono text-xs uppercase tracking-widest hover:text-[var(--bandit-red)]">Intel Data</a>
-        <a href="https://whop.com/bookiebandit?a=digitalartlab" class="px-6 py-4 border-b border-[rgba(255,255,255,0.05)] text-[var(--bandit-red)] font-mono text-xs font-bold uppercase tracking-widest">Hub Login</a>
-        <a href="#pricing" class="px-6 py-5 text-center bg-[var(--bandit-red)] text-white font-display text-2xl font-bold tracking-widest">GET THE BOT</a>
+    <div class="flex items-center gap-4">
+      <a href="https://whop.com/bookiebandit?a=digitalartlab" target="_blank" class="hidden lg:inline-flex btn-g items-center gap-2 px-4 py-2.5 mn font-bold text-xs uppercase tracking-wider" style="border-radius:2px;"><i class="fa-solid fa-right-to-bracket mr-1"></i> Hub Login</a>
+      <a href="#pricing" class="hidden lg:inline-flex btn-c items-center gap-2 px-5 py-2.5 mn font-bold text-sm uppercase tracking-wider text-black" style="border-radius:2px;">GET THE BOT</a>
+      <button id="ham" class="lg:hidden p-2 flex flex-col gap-1.5">
+        <span class="hl w-6 h-0.5 bg-white rounded" style="transition:all .3s;"></span>
+        <span class="hl w-6 h-0.5 bg-white rounded" style="transition:all .3s;"></span>
+        <span class="hl w-4 h-0.5 bg-white rounded" style="transition:all .3s;"></span>
+      </button>
     </div>
+  </div>
 </nav>
 
-<section class="relative min-h-[100vh] flex items-center justify-center pt-32 pb-20 overflow-hidden">
-    
-    <div class="glow-orb-red top-1/4 left-[-10%] floating"></div>
-    <div class="glow-orb-green bottom-10 right-[-10%] floating" style="animation-delay: 2s; opacity: 0.3;"></div>
+<!-- MOBILE NAV -->
+<div id="mnav" class="fixed inset-0 z-40 flex flex-col items-center justify-center" style="background:rgba(3,5,8,.99);backdrop-filter:blur(40px);">
+  <div class="text-center space-y-8">
+    <a href="#about" class="ml block font-bold text-6xl text-white uppercase tracking-tight hover:text-[var(--cyan)] transition-colors" style="font-weight:700;">Protocol</a>
+    <a href="#features" class="ml block font-bold text-6xl text-white uppercase tracking-tight hover:text-[var(--cyan)] transition-colors" style="font-weight:700;">Arsenal</a>
+    <a href="#reviews" class="ml block font-bold text-6xl text-white uppercase tracking-tight hover:text-[var(--cyan)] transition-colors" style="font-weight:700;">Intel</a>
+    <a href="#pricing" class="ml block font-bold text-6xl text-white uppercase tracking-tight hover:text-[var(--cyan)] transition-colors" style="font-weight:700;">Access</a>
+    <a href="#pricing" class="inline-block mt-8 btn-c px-10 py-4 mn font-bold text-lg uppercase tracking-wider text-black" style="border-radius:2px;">GET THE BOT</a>
+  </div>
+</div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        
-        <div class="lg:col-span-7 text-center lg:text-left">
-            
-            <div class="inline-flex items-center gap-3 px-4 py-2 rounded-sm border border-[var(--bandit-red)] bg-[rgba(225,29,72,0.1)] mb-8 reveal hover-target backdrop-blur-sm">
-                <i class="fa-solid fa-robot text-[var(--bandit-red)]"></i>
-                <span class="text-[10px] font-bold text-white tracking-[0.3em] uppercase font-mono">The Ultimate AI Betting Engine</span>
-            </div>
-
-            <h1 class="text-6xl md:text-8xl lg:text-[7rem] font-display font-bold text-white leading-[0.85] mb-6 reveal delay-100 uppercase tracking-tight">
-                THE HOUSE <br>ALWAYS WINS. <br>
-                <span class="text-gradient-red">UNTIL NOW.</span>
-            </h1>
-
-            <p class="text-lg text-gray-400 mb-10 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed reveal delay-200">
-                You cannot beat the books with gut feelings. <strong class="text-white">Bookie Bandit</strong> is a $500/month institutional-grade AI bot that automatically scrapes, analyzes, and places mathematically profitable (+EV) bets on your behalf. Real passive income, total automation.
-            </p>
-
-            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5 reveal delay-300">
-                <a href="#pricing" class="w-full sm:w-auto px-10 py-5 btn-bandit font-display font-bold text-3xl text-center hover-target tracking-wide rounded-sm">
-                    START THE HEIST
-                </a>
-                <a href="https://whop.com/bookiebandit/free-discord-access-91-7a4f?a=digitalartlab" target="_blank" class="w-full sm:w-auto px-10 py-5 rounded-sm border border-gray-700 bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] hover:border-[var(--text-bright)] text-white font-display font-bold text-3xl transition-all text-center tracking-wide hover-target">
-                    JOIN FREE DISCORD
-                </a>
-            </div>
-
-            <div class="mt-14 pt-8 border-t border-[rgba(255,255,255,0.05)] reveal delay-300">
-                <p class="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-4">Supported Targets</p>
-                <div class="flex flex-wrap justify-center lg:justify-start items-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                    <span class="font-display text-2xl tracking-wider text-white"><i class="fa-solid fa-bolt text-yellow-400 mr-1"></i> PRIZEPICKS</span>
-                    <span class="font-display text-2xl tracking-wider text-white"><i class="fa-solid fa-dog text-yellow-500 mr-1"></i> UNDERDOG</span>
-                    <span class="font-display text-2xl tracking-wider text-white"><i class="fa-solid fa-shield text-blue-500 mr-1"></i> FANDUEL</span>
-                    <span class="font-display text-2xl tracking-wider text-white"><i class="fa-solid fa-crown text-[var(--cash-green)] mr-1"></i> DRAFTKINGS</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="lg:col-span-5 relative hidden lg:block reveal delay-200">
-            <div class="absolute inset-0 bg-gradient-to-tr from-[var(--bandit-red)] to-[var(--cash-green)] rounded-full blur-[100px] opacity-20 floating"></div>
-            
-            <div class="relative z-10 glass-panel p-2 border border-[var(--bandit-red)] shadow-[0_0_50px_rgba(225,29,72,0.2)] floating transform rotate-[1deg]">
-                <div class="bg-[#050505] rounded-lg p-5 relative overflow-hidden h-[480px] flex flex-col border border-gray-900">
-                    <div class="scan-line"></div>
-                    
-                    <div class="flex items-center justify-between border-b border-gray-800 pb-3 mb-4 relative z-20">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-robot text-[var(--bandit-red)]"></i>
-                            <span class="font-mono text-xs text-white tracking-widest uppercase">Bandit_AI_Engine.exe</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <div class="w-2 h-2 rounded-full bg-red-500 opacity-50"></div>
-                            <div class="w-2 h-2 rounded-full bg-yellow-500 opacity-50"></div>
-                            <div class="w-2 h-2 rounded-full bg-[var(--cash-green)] animate-pulse"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex-1 font-mono text-[11px] text-gray-400 overflow-hidden relative z-20">
-                        <div class="absolute bottom-0 left-0 w-full space-y-3 pb-2">
-                            <p class="text-gray-500">[14:02:11] Authenticating PrizePicks account...</p>
-                            <p class="text-green-500">[14:02:12] SUCCESS: Balance $4,250.00</p>
-                            <p class="text-gray-500">[14:02:15] Scraping Sharp Book APIs (Pinnacle/Circa)...</p>
-                            
-                            <div class="bg-[rgba(225,29,72,0.1)] border-l-2 border-[var(--bandit-red)] p-3 my-3">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[var(--bandit-red)] font-bold uppercase tracking-wider"><i class="fa-solid fa-triangle-exclamation"></i> Edge Detected</span>
-                                    <span class="text-white bg-[var(--bandit-red)] px-2 py-0.5 text-[9px] rounded">+7.4% EV</span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-y-2 mt-2">
-                                    <div><span class="text-gray-500 block text-[9px]">MARKET</span><span class="text-white">L. Doncic O 28.5 PTS</span></div>
-                                    <div><span class="text-gray-500 block text-[9px]">TARGET</span><span class="text-white">PrizePicks</span></div>
-                                </div>
-                            </div>
-                            
-                            <p class="text-gray-400">[14:02:16] Executing Slip via API...</p>
-                            <p class="text-[var(--cash-green)] font-bold">[14:02:17] BET PLACED SUCCESSFULLY. Wager: $50.00</p>
-                            <div class="flex items-center gap-2 mt-4">
-                                <span class="text-[var(--bandit-red)]">>_</span>
-                                <span class="w-2 h-4 bg-[var(--bandit-red)] animate-pulse"></span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none"></div>
-                </div>
-            </div>
-            
-            <div class="absolute -right-8 bottom-20 glass-panel p-4 border-[var(--cash-green)] floating" style="animation-delay: 1.5s; z-index: 30;">
-                <div class="flex items-center gap-4">
-                    <div class="text-[var(--cash-green)] text-3xl"><i class="fa-solid fa-sack-dollar"></i></div>
-                    <div>
-                        <div class="font-display text-white text-3xl leading-none">+$1,240</div>
-                        <div class="font-mono text-[9px] text-gray-500 uppercase tracking-widest mt-1">Auto-Generated This Week</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+<!-- TICKER -->
+<div class="overflow-hidden border-b" style="margin-top:56px;background:rgba(10,16,24,0.7);border-color:rgba(0,245,255,0.1);">
+  <div class="py-2.5 flex whitespace-nowrap">
+    <div class="tk flex items-center gap-10 px-6">
+      <span class="mn font-bold text-[10px] uppercase tracking-widest text-white">BOOKIE BANDIT LIVE</span>
+      <span class="mn text-[10px] uppercase tracking-widest" style="color:var(--grn);">NBA PARLAY AUTO-PLACED +8.4% EV</span>
+      <span class="mn text-[10px] uppercase tracking-widest" style="color:rgba(232,255,254,0.4);">ARB SCANNER: 3.4% LOCKED</span>
+      <span class="mn text-[10px] uppercase tracking-widest" style="color:var(--c2);">PRIZEPICKS SLIP EXECUTED</span>
+      <span class="mn text-[10px] uppercase tracking-widest" style="color:rgba(232,255,254,0.4);">KELLY CRITERION ACTIVE</span>
+      <span class="mn text-[10px] uppercase tracking-widest" style="color:var(--cyan);">+210 UNITS THIS NBA SEASON</span>
+      <span class="mn text-[10px] uppercase tracking-widest" style="color:var(--grn);">BAN PROTECTION: NOMINAL</span>
+      <span class="mn font-bold text-[10px] uppercase tracking-widest text-white">BOOKIE BANDIT LIVE</span>
+      <span class="mn text-[10px] uppercase tracking-widest" style="color:var(--grn);">NBA PARLAY AUTO-PLACED +8.4% EV</span>
+      <span class="mn text-[10px] uppercase tracking-widest" style="color:rgba(232,255,254,0.4);">ARB SCANNER: 3.4% LOCKED</span>
     </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="min-h-screen flex flex-col justify-center relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none overflow-hidden" style="z-index:1;">
+    <svg class="absolute -top-20 -right-20 opacity-[0.04]" width="650" height="650" viewBox="0 0 650 650" fill="none">
+      <circle cx="325" cy="325" r="310" stroke="#00F5FF" stroke-width="1"/>
+      <circle cx="325" cy="325" r="240" stroke="#00F5FF" stroke-width=".5" stroke-dasharray="8 5"/>
+      <circle cx="325" cy="325" r="170" stroke="#00FF9F" stroke-width=".5" stroke-dasharray="3 8"/>
+      <line x1="0" y1="325" x2="650" y2="325" stroke="#00F5FF" stroke-width=".5"/>
+      <line x1="325" y1="0" x2="325" y2="650" stroke="#00F5FF" stroke-width=".5"/>
+    </svg>
+  </div>
+  <div class="absolute" style="width:800px;height:800px;top:-200px;right:-300px;border-radius:50%;background:radial-gradient(circle,rgba(0,245,255,0.06),transparent 60%);filter:blur(80px);pointer-events:none;z-index:1;"></div>
+  <div class="cl absolute top-0 left-0 right-0" style="z-index:2;"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 py-16 relative w-full" style="z-index:2;">
+    <div class="grid lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7">
+        <div class="inline-flex items-center gap-3 px-4 py-2 mb-8" style="background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.25);">
+          <i class="fa-solid fa-robot text-xs" style="color:var(--cyan);"></i>
+          <span class="mn text-xs font-bold uppercase tracking-widest" style="color:var(--c2);">The Ultimate AI Betting Engine</span>
+        </div>
+        <div id="hh">
+          <h1 class="font-bold text-white leading-none uppercase tracking-tight mb-5" style="font-size:clamp(3.5rem,9vw,9.5rem);line-height:.82;font-weight:700;letter-spacing:-.02em;">
+            THE HOUSE<br/>ALWAYS<br/>WINS.<br/><span class="ct">UNTIL NOW.</span>
+          </h1>
+        </div>
+        <p class="leading-relaxed mb-8 max-w-lg" style="font-size:1.05rem;color:rgba(232,255,254,0.55);">
+          You cannot beat the books with gut feelings. <strong style="color:var(--wh);">Bookie Bandit</strong> is a $500/month institutional-grade AI bot that automatically scrapes, analyzes, and places mathematically profitable (+EV) bets on your behalf. Real passive income, total automation.
+        </p>
+        <div class="flex flex-wrap gap-4 mb-10 rv">
+          <a href="#pricing" class="btn-c inline-flex items-center gap-2 px-8 py-4 mn font-bold text-base uppercase tracking-wider text-black neon" style="border-radius:2px;">START THE HEIST <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="https://whop.com/bookiebandit/free-discord-access-91-7a4f?a=digitalartlab" target="_blank" class="btn-g inline-flex items-center gap-2 px-8 py-4 mn font-semibold text-base uppercase tracking-wider" style="border-radius:2px;">JOIN FREE DISCORD</a>
+        </div>
+        <div class="rv pt-6" style="border-top:1px solid rgba(232,255,254,0.06);">
+          <p class="mn text-[9px] uppercase tracking-[.22em] mb-4" style="color:rgba(232,255,254,0.3);">Supported Targets</p>
+          <div class="flex flex-wrap gap-6 items-center" style="opacity:.6;">
+            <span class="font-bold uppercase tracking-wider text-lg text-white"><i class="fa-solid fa-bolt text-yellow-400 mr-1"></i> PRIZEPICKS</span>
+            <span class="font-bold uppercase tracking-wider text-lg text-white"><i class="fa-solid fa-dog text-yellow-500 mr-1"></i> UNDERDOG</span>
+            <span class="font-bold uppercase tracking-wider text-lg text-white"><i class="fa-solid fa-shield text-blue-400 mr-1"></i> FANDUEL</span>
+            <span class="font-bold uppercase tracking-wider text-lg text-white"><i class="fa-solid fa-crown mr-1" style="color:var(--grn);"></i> DRAFTKINGS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 hidden lg:block">
+        <div class="glass" style="border:1px solid rgba(0,245,255,0.25);box-shadow:0 0 60px rgba(0,245,255,0.07);">
+          <div class="flex items-center justify-between px-5 py-3.5" style="background:rgba(0,245,255,0.04);border-bottom:1px solid rgba(0,245,255,0.12);">
+            <div class="flex items-center gap-3">
+              <div class="flex gap-1.5"><div class="w-2.5 h-2.5 rounded-full" style="background:#ff5f57;"></div><div class="w-2.5 h-2.5 rounded-full" style="background:#ffbd2e;"></div><div class="w-2.5 h-2.5 rounded-full" style="background:#28c840;"></div></div>
+              <i class="fa-solid fa-robot text-xs" style="color:var(--cyan);"></i>
+              <span class="mn text-xs font-bold uppercase tracking-widest" style="color:var(--c2);">Bandit_AI_Engine.exe</span>
+            </div>
+            <div class="gd"></div>
+          </div>
+          <div class="relative" style="background:var(--obs);padding:20px;height:380px;overflow:hidden;">
+            <div class="scanline"></div>
+            <div class="mn text-xs space-y-2" style="color:rgba(232,255,254,0.5);">
+              <p>[14:02:11] Authenticating PrizePicks account...</p>
+              <p style="color:var(--grn);">[14:02:12] SUCCESS: Balance $4,250.00</p>
+              <p>[14:02:15] Scraping Sharp Book APIs (Pinnacle/Circa)...</p>
+              <p>[14:02:15] Running Poisson distribution models...</p>
+              <div class="my-3 p-3" style="background:rgba(0,245,255,0.06);border-left:2px solid var(--cyan);border:1px solid rgba(0,245,255,0.15);">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="font-bold uppercase tracking-wider text-xs" style="color:var(--cyan);">EDGE DETECTED</span>
+                  <span class="px-2 py-0.5 text-[9px] font-bold text-black" style="background:var(--cyan);">+7.4% EV</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div><span class="block text-[9px]" style="color:rgba(232,255,254,0.3);">MARKET</span><span class="text-white">L. Doncic O 28.5 PTS</span></div>
+                  <div><span class="block text-[9px]" style="color:rgba(232,255,254,0.3);">TARGET</span><span class="text-white">PrizePicks</span></div>
+                </div>
+              </div>
+              <p>[14:02:16] Executing Slip via API...</p>
+              <p class="font-bold" style="color:var(--grn);">[14:02:17] BET PLACED SUCCESSFULLY. Wager: $50.00</p>
+              <p>[14:02:19] Scanning Pinnacle for arbitrage...</p>
+              <p style="color:var(--cyan);">[14:02:21] ARB FOUND: Alcaraz ML — Lock 3.4%</p>
+              <div class="flex items-center gap-2 mt-4"><span style="color:var(--cyan);">&gt;_</span><span class="w-2 h-4 blk" style="background:var(--cyan);display:inline-block;"></span></div>
+            </div>
+          </div>
+          <div class="px-5 py-4 flex items-center justify-between" style="background:rgba(0,245,255,0.04);border-top:1px solid rgba(0,245,255,0.12);">
+            <div><div class="mn text-[9px] uppercase tracking-widest mb-0.5" style="color:rgba(232,255,254,0.3);">Auto-Generated This Week</div><div class="font-bold text-2xl text-white" style="font-weight:700;">+$1,240</div></div>
+            <div class="text-right"><div class="mn text-[9px] uppercase tracking-widest mb-0.5" style="color:rgba(232,255,254,0.3);">Bot Uptime</div><div class="font-bold text-2xl ct" style="font-weight:700;">24/7</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section class="border-y border-[rgba(255,255,255,0.05)] bg-[#0a0a0c] relative z-20">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-800">
-            <div class="p-8 text-center reveal hover-target">
-                <div class="font-display text-5xl lg:text-6xl text-white font-bold mb-1">100%</div>
-                <div class="font-mono text-[10px] text-[var(--bandit-red)] uppercase tracking-widest">Hands-Free Automation</div>
-            </div>
-            <div class="p-8 text-center reveal delay-100 hover-target">
-                <div class="font-display text-5xl lg:text-6xl text-[var(--cash-green)] font-bold mb-1">+EV</div>
-                <div class="font-mono text-[10px] text-gray-400 uppercase tracking-widest">Strict Mathematical Edge</div>
-            </div>
-            <div class="p-8 text-center reveal delay-200 hover-target">
-                <div class="font-display text-5xl lg:text-6xl text-white font-bold mb-1">24/7</div>
-                <div class="font-mono text-[10px] text-gray-400 uppercase tracking-widest">Algorithm Uptime</div>
-            </div>
-            <div class="p-8 text-center reveal delay-300 hover-target">
-                <div class="font-display text-5xl lg:text-6xl text-[var(--bandit-red)] font-bold mb-1">30%</div>
-                <div class="font-mono text-[10px] text-gray-400 uppercase tracking-widest">Affiliate Payout</div>
-            </div>
-        </div>
+<!-- STATS -->
+<section class="border-y" style="background:var(--slab);border-color:rgba(232,255,254,0.06);">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 lg:grid-cols-4">
+      <div class="p-8 text-center rv" style="border-right:1px solid rgba(232,255,254,0.06);"><div class="font-bold text-5xl text-white mb-1 od" data-t="100" data-s="%" style="font-weight:700;">0%</div><div class="mn text-[10px] uppercase tracking-widest" style="color:var(--c2);">Hands-Free Automation</div></div>
+      <div class="p-8 text-center rv" style="border-right:1px solid rgba(232,255,254,0.06);"><div class="font-bold text-5xl mb-1 gt" style="font-weight:700;">+EV</div><div class="mn text-[10px] uppercase tracking-widest" style="color:rgba(232,255,254,0.35);">Strict Mathematical Edge</div></div>
+      <div class="p-8 text-center rv" style="border-right:1px solid rgba(232,255,254,0.06);"><div class="font-bold text-5xl text-white mb-1 od" data-t="24" data-s="/7" style="font-weight:700;">0/7</div><div class="mn text-[10px] uppercase tracking-widest" style="color:rgba(232,255,254,0.35);">Algorithm Uptime</div></div>
+      <div class="p-8 text-center rv"><div class="font-bold text-5xl ct mb-1 od" data-t="30" data-s="%" style="font-weight:700;">0%</div><div class="mn text-[10px] uppercase tracking-widest" style="color:rgba(232,255,254,0.35);">Affiliate Payout</div></div>
     </div>
-</section>
-<section id="protocol" class="py-24 relative overflow-hidden bg-[#050505] border-y border-[rgba(225,29,72,0.15)]">
-    <div class="absolute inset-0 z-0 opacity-10 cyber-grid pointer-events-none"></div>
-
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-20 reveal">
-            <h2 class="text-[var(--bandit-red)] font-mono tracking-widest uppercase text-xs mb-3">System Architecture</h2>
-            <h3 class="text-5xl md:text-6xl font-display font-bold text-white mb-6 uppercase tracking-wide">HOW THE <span class="text-gradient-red">BANDIT OPERATES</span></h3>
-            <p class="text-gray-400 max-w-3xl mx-auto font-light leading-relaxed text-lg">We don't sell picks. We sell infrastructure. The Bookie Bandit algorithm operates on a strict, emotionless 4-step execution protocol designed to drain the sportsbooks.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            <div class="hidden md:block absolute top-[45px] left-[12%] w-[76%] h-[2px] bg-gradient-to-r from-[rgba(225,29,72,0.1)] via-[var(--bandit-red)] to-[rgba(225,29,72,0.1)] z-0"></div>
-            <div class="hidden md:block absolute top-[45px] left-[12%] h-[2px] bg-white z-0 shadow-[0_0_15px_rgba(255,255,255,0.8)] animate-pulse" style="width: 20%; animation-duration: 2s;"></div>
-
-            <div class="relative z-10 glass-panel p-8 rounded border border-gray-900 hover:border-[var(--bandit-red)] transition-all card-hover reveal hover-target text-center">
-                <div class="w-24 h-24 mx-auto rounded-full bg-[#0a0a0a] border-4 border-[var(--bandit-red)] flex items-center justify-center text-3xl text-[var(--bandit-red)] font-mono mb-6 shadow-[0_0_30px_rgba(225,29,72,0.3)]">
-                    <i class="fa-solid fa-database"></i>
-                </div>
-                <h4 class="text-white font-display font-bold text-2xl uppercase tracking-wider mb-3">01. Data Ingestion</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    Scraping raw API feeds from sharp bookmakers (Pinnacle, Circa) and DFS platforms (PrizePicks, Underdog) with sub-10ms latency. We see the line movement before retail apps even refresh.
-                </p>
-                <div class="mt-4 pt-4 border-t border-gray-800 font-mono text-[10px] text-[var(--bandit-red)] uppercase tracking-widest">
-                    Latency: < 10ms
-                </div>
-            </div>
-
-            <div class="relative z-10 glass-panel p-8 rounded border border-gray-900 hover:border-[var(--bandit-red)] transition-all card-hover reveal delay-100 hover-target text-center">
-                <div class="w-24 h-24 mx-auto rounded-full bg-[#0a0a0a] border-4 border-[var(--bandit-red)] flex items-center justify-center text-3xl text-[var(--bandit-red)] font-mono mb-6 shadow-[0_0_30px_rgba(225,29,72,0.3)]">
-                    <i class="fa-solid fa-microchip"></i>
-                </div>
-                <h4 class="text-white font-display font-bold text-2xl uppercase tracking-wider mb-3">02. EV Calculation</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    The engine calculates the true probability of an event using Poisson distributions and sharp consensus. If the implied odds on PrizePicks offer a +EV edge of > 5%, it triggers an alert.
-                </p>
-                <div class="mt-4 pt-4 border-t border-gray-800 font-mono text-[10px] text-[var(--bandit-red)] uppercase tracking-widest">
-                    Math Edge: Verified
-                </div>
-            </div>
-
-            <div class="relative z-10 glass-panel p-8 rounded border border-gray-900 hover:border-[var(--cash-green)] transition-all card-hover reveal delay-200 hover-target text-center">
-                <div class="w-24 h-24 mx-auto rounded-full bg-[#0a0a0a] border-4 border-[var(--cash-green)] flex items-center justify-center text-3xl text-[var(--cash-green)] font-mono mb-6 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-                    <i class="fa-solid fa-crosshairs"></i>
-                </div>
-                <h4 class="text-white font-display font-bold text-2xl uppercase tracking-wider mb-3">03. Auto-Execution</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    For Pro members, the bot connects directly to your sportsbook/DFS accounts via secure API. It automatically structures the slip, calculates the Kelly Criterion stake, and places the bet instantly.
-                </p>
-                <div class="mt-4 pt-4 border-t border-gray-800 font-mono text-[10px] text-[var(--cash-green)] uppercase tracking-widest">
-                    Status: Automated
-                </div>
-            </div>
-
-            <div class="relative z-10 glass-panel p-8 rounded border border-gray-900 hover:border-white transition-all card-hover reveal delay-300 hover-target text-center">
-                <div class="w-24 h-24 mx-auto rounded-full bg-[#0a0a0a] border-4 border-white flex items-center justify-center text-3xl text-white font-mono mb-6 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                </div>
-                <h4 class="text-white font-display font-bold text-2xl uppercase tracking-wider mb-3">04. Bankroll Growth</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    You wake up, check your dashboard, and see the profits. The law of large numbers guarantees that if you place thousands of +EV bets, you will mathematically drain the house over time.
-                </p>
-                <div class="mt-4 pt-4 border-t border-gray-800 font-mono text-[10px] text-white uppercase tracking-widest">
-                    Outcome: Profit
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </section>
 
-<section id="terminal" class="py-24 relative overflow-hidden bg-[#0f0f11]">
-    <div class="glow-orb-green top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-20"></div>
-
-    <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        <div class="flex flex-col md:flex-row justify-between items-end mb-10 reveal">
-            <div>
-                <h2 class="text-[var(--bandit-red)] font-mono tracking-widest uppercase text-xs mb-3">Terminal Output</h2>
-                <h3 class="text-4xl md:text-5xl font-display font-bold text-white uppercase tracking-wide">LIVE <span class="text-[var(--cash-green)]">INTERCEPTION FEED</span></h3>
-                <p class="text-gray-500 font-mono text-xs mt-2 uppercase">Displaying last 10 automated executions...</p>
-            </div>
-            <div class="mt-6 md:mt-0 flex items-center gap-3 font-mono text-xs text-white bg-[rgba(16,185,129,0.1)] border border-[var(--cash-green)] px-4 py-2 rounded shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                <span class="w-2 h-2 rounded-full bg-[var(--cash-green)] animate-ping"></span>
-                BOT STATUS: SNIPING
-            </div>
-        </div>
-
-        <div class="glass-panel overflow-hidden border border-gray-800 rounded reveal delay-100 shadow-2xl">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse whitespace-nowrap">
-                    <thead>
-                        <tr class="bg-[#050505] border-b border-[var(--bandit-red)] font-display text-gray-400 tracking-wider text-xl uppercase">
-                            <th class="p-5 font-semibold">Time (EST)</th>
-                            <th class="p-5 font-semibold">Target Book</th>
-                            <th class="p-5 font-semibold">Event / Matchup</th>
-                            <th class="p-5 font-semibold">Market (Prop)</th>
-                            <th class="p-5 font-semibold">Line / Odds</th>
-                            <th class="p-5 font-semibold">Kelly Stake</th>
-                            <th class="p-5 font-semibold text-right">Mathematical EV</th>
-                        </tr>
-                    </thead>
-                    <tbody class="font-mono text-xs text-gray-300">
-                        <tr class="border-b border-gray-800 hover:bg-[rgba(225,29,72,0.05)] transition-colors hover-target cursor-pointer">
-                            <td class="p-5 text-gray-500">18:42:01.112</td>
-                            <td class="p-5"><span class="bg-yellow-900/30 text-yellow-400 px-3 py-1 rounded border border-yellow-900/50 uppercase">PrizePicks</span></td>
-                            <td class="p-5 font-bold text-white">NBA: LAL @ DEN</td>
-                            <td class="p-5">N. Jokic OVER 28.5 Pts</td>
-                            <td class="p-5 text-white bg-gray-900/50 rounded px-2">-110</td>
-                            <td class="p-5 text-gray-400">$125.00 <span class="text-[10px] ml-1">(2.5u)</span></td>
-                            <td class="p-5 text-right text-[var(--cash-green)] font-bold text-sm">+ 8.42%</td>
-                        </tr>
-                        <tr class="border-b border-gray-800 hover:bg-[rgba(225,29,72,0.05)] transition-colors hover-target cursor-pointer">
-                            <td class="p-5 text-gray-500">18:45:13.405</td>
-                            <td class="p-5"><span class="bg-yellow-900/30 text-yellow-500 px-3 py-1 rounded border border-yellow-600/50 uppercase">Underdog</span></td>
-                            <td class="p-5 font-bold text-white">MLB: NYY @ BOS</td>
-                            <td class="p-5">A. Judge OVER 1.5 Total Bases</td>
-                            <td class="p-5 text-white bg-gray-900/50 rounded px-2">+130</td>
-                            <td class="p-5 text-gray-400">$75.00 <span class="text-[10px] ml-1">(1.5u)</span></td>
-                            <td class="p-5 text-right text-[var(--cash-green)] font-bold text-sm">+ 6.15%</td>
-                        </tr>
-                        <tr class="border-b border-gray-800 hover:bg-[rgba(225,29,72,0.05)] transition-colors hover-target cursor-pointer bg-[rgba(16,185,129,0.02)]">
-                            <td class="p-5 text-gray-500">18:51:09.992</td>
-                            <td class="p-5"><span class="bg-blue-900/30 text-blue-400 px-3 py-1 rounded border border-blue-900/50 uppercase">FanDuel</span></td>
-                            <td class="p-5 font-bold text-white">NFL: KC @ BAL</td>
-                            <td class="p-5">P. Mahomes OVER 2.5 Pass TD</td>
-                            <td class="p-5 text-white bg-gray-900/50 rounded px-2">+155</td>
-                            <td class="p-5 text-gray-400">$100.00 <span class="text-[10px] ml-1">(2.0u)</span></td>
-                            <td class="p-5 text-right text-[var(--cash-green)] font-bold text-sm">+ 9.80% <i class="fa-solid fa-fire text-orange-500 ml-1"></i></td>
-                        </tr>
-                        <tr class="border-b border-gray-800 hover:bg-[rgba(225,29,72,0.05)] transition-colors hover-target cursor-pointer">
-                            <td class="p-5 text-gray-500">18:58:33.210</td>
-                            <td class="p-5"><span class="bg-green-900/30 text-green-400 px-3 py-1 rounded border border-green-900/50 uppercase">DraftKings</span></td>
-                            <td class="p-5 font-bold text-white">NHL: EDM @ FLA</td>
-                            <td class="p-5">C. McDavid OVER 3.5 SOG</td>
-                            <td class="p-5 text-white bg-gray-900/50 rounded px-2">-125</td>
-                            <td class="p-5 text-gray-400">$150.00 <span class="text-[10px] ml-1">(3.0u)</span></td>
-                            <td class="p-5 text-right text-[var(--cash-green)] font-bold text-sm">+ 5.22%</td>
-                        </tr>
-                        <tr class="border-b border-gray-800 hover:bg-[rgba(225,29,72,0.05)] transition-colors hover-target cursor-pointer">
-                            <td class="p-5 text-gray-500">19:04:12.774</td>
-                            <td class="p-5"><span class="bg-yellow-900/30 text-yellow-400 px-3 py-1 rounded border border-yellow-900/50 uppercase">PrizePicks</span></td>
-                            <td class="p-5 font-bold text-white">CSGO: NAVI vs FAZE</td>
-                            <td class="p-5">s1mple OVER 38.5 Kills (Maps 1-2)</td>
-                            <td class="p-5 text-white bg-gray-900/50 rounded px-2">-119</td>
-                            <td class="p-5 text-gray-400">$100.00 <span class="text-[10px] ml-1">(2.0u)</span></td>
-                            <td class="p-5 text-right text-[var(--cash-green)] font-bold text-sm">+ 7.10%</td>
-                        </tr>
-                        <tr class="border-b border-gray-800 hover:bg-[rgba(225,29,72,0.05)] transition-colors hover-target cursor-pointer">
-                            <td class="p-5 text-gray-500">19:12:45.002</td>
-                            <td class="p-5"><span class="bg-blue-900/30 text-blue-400 px-3 py-1 rounded border border-blue-900/50 uppercase">FanDuel</span></td>
-                            <td class="p-5 font-bold text-white">NBA: MIA @ PHI</td>
-                            <td class="p-5">J. Embiid UNDER 11.5 Rebounds</td>
-                            <td class="p-5 text-white bg-gray-900/50 rounded px-2">-105</td>
-                            <td class="p-5 text-gray-400">$125.00 <span class="text-[10px] ml-1">(2.5u)</span></td>
-                            <td class="p-5 text-right text-[var(--cash-green)] font-bold text-sm">+ 6.05%</td>
-                        </tr>
-                        <tr class="border-b border-gray-800 hover:bg-[rgba(225,29,72,0.05)] transition-colors hover-target cursor-pointer bg-[rgba(225,29,72,0.05)]">
-                            <td class="p-5 text-gray-500">19:18:09.333</td>
-                            <td class="p-5"><span class="bg-gray-800 text-white px-3 py-1 rounded border border-gray-600 uppercase">Pinnacle</span></td>
-                            <td class="p-5 font-bold text-white">TENNIS: ALCARAZ vs SINNER</td>
-                            <td class="p-5">Alcaraz Moneyline (Arb Opportunity)</td>
-                            <td class="p-5 text-white bg-gray-900/50 rounded px-2">+115</td>
-                            <td class="p-5 text-gray-400">$500.00 <span class="text-[10px] ml-1">(Arb Max)</span></td>
-                            <td class="p-5 text-right text-[var(--bandit-red)] font-bold text-sm">ARB 3.4% <i class="fa-solid fa-lock ml-1"></i></td>
-                        </tr>
-                        <tr class="hover:bg-[rgba(225,29,72,0.05)] transition-colors hover-target cursor-pointer">
-                            <td class="p-5 text-gray-500">19:22:55.881</td>
-                            <td class="p-5"><span class="bg-yellow-900/30 text-yellow-500 px-3 py-1 rounded border border-yellow-600/50 uppercase">Underdog</span></td>
-                            <td class="p-5 font-bold text-white">NBA: GSW @ PHX</td>
-                            <td class="p-5">S. Curry OVER 4.5 3PT Made</td>
-                            <td class="p-5 text-white bg-gray-900/50 rounded px-2">-140</td>
-                            <td class="p-5 text-gray-400">$150.00 <span class="text-[10px] ml-1">(3.0u)</span></td>
-                            <td class="p-5 text-right text-[var(--cash-green)] font-bold text-sm">+ 5.88%</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="bg-[#050505] p-5 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="font-mono text-xs text-gray-500">
-                    Showing 8 of 1,245 automated entries today.
-                </div>
-                <a href="#pricing" class="font-display text-xl text-[var(--bandit-red)] hover:text-white transition-colors uppercase tracking-widest hover-target">
-                    [ UNLOCK FULL TERMINAL ACCESS ]
-                </a>
-            </div>
-        </div>
-
+<!-- PROTOCOL -->
+<section id="about" class="py-24 relative overflow-hidden" style="background:var(--obs);border-top:1px solid rgba(0,245,255,0.12);border-bottom:1px solid rgba(0,245,255,0.12);">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+    <div class="text-center mb-16 rv">
+      <div class="mn text-xs uppercase tracking-[.22em] mb-3" style="color:var(--c2);">System Architecture</div>
+      <h3 class="font-bold leading-none uppercase" style="font-size:clamp(2.5rem,5vw,4.5rem);font-weight:700;">HOW THE <span class="ct">BANDIT OPERATES</span></h3>
+      <p class="max-w-2xl mx-auto mt-5 text-lg leading-relaxed" style="color:rgba(232,255,254,0.4);">We don't sell picks. We sell infrastructure. The Bookie Bandit algorithm operates on a strict, emotionless 4-step execution protocol designed to drain the sportsbooks.</p>
     </div>
+    <div class="grid md:grid-cols-4 gap-8 relative">
+      <div class="hidden md:block absolute top-11 left-[12%] w-[76%] h-px" style="background:linear-gradient(90deg,rgba(0,245,255,0.05),rgba(0,245,255,0.4),rgba(0,245,255,0.05));"></div>
+      <div class="rv card p-7 text-center"><div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-5 text-3xl" style="background:rgba(0,245,255,0.06);border:2px solid rgba(0,245,255,0.35);color:var(--cyan);box-shadow:0 0 30px rgba(0,245,255,0.2);"><i class="fa-solid fa-database"></i></div><h4 class="font-bold text-white text-xl uppercase tracking-wider mb-3" style="font-weight:700;">01. Data Ingestion</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">Scraping raw API feeds from sharp bookmakers (Pinnacle, Circa) and DFS platforms with sub-10ms latency. We see line movement before retail apps even refresh.</p><div class="mt-4 pt-4 mn text-[10px] uppercase tracking-widest" style="border-top:1px solid rgba(232,255,254,0.05);color:var(--c2);">Latency: &lt; 10ms</div></div>
+      <div class="rv card p-7 text-center"><div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-5 text-3xl" style="background:rgba(0,245,255,0.06);border:2px solid rgba(0,245,255,0.35);color:var(--cyan);box-shadow:0 0 30px rgba(0,245,255,0.2);"><i class="fa-solid fa-microchip"></i></div><h4 class="font-bold text-white text-xl uppercase tracking-wider mb-3" style="font-weight:700;">02. EV Calculation</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">The engine calculates true probability using Poisson distributions and sharp consensus. If PrizePicks offers a +EV edge of &gt; 5%, it triggers an alert.</p><div class="mt-4 pt-4 mn text-[10px] uppercase tracking-widest" style="border-top:1px solid rgba(232,255,254,0.05);color:var(--c2);">Math Edge: Verified</div></div>
+      <div class="rv card p-7 text-center"><div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-5 text-3xl" style="background:rgba(0,255,159,0.06);border:2px solid rgba(0,255,159,0.3);color:var(--grn);box-shadow:0 0 30px rgba(0,255,159,0.15);"><i class="fa-solid fa-crosshairs"></i></div><h4 class="font-bold text-white text-xl uppercase tracking-wider mb-3" style="font-weight:700;">03. Auto-Execution</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">For Pro members, the bot connects directly to your sportsbook/DFS accounts via secure API. It calculates the Kelly Criterion stake and places the bet instantly.</p><div class="mt-4 pt-4 mn text-[10px] uppercase tracking-widest" style="border-top:1px solid rgba(232,255,254,0.05);color:var(--grn);">Status: Automated</div></div>
+      <div class="rv card p-7 text-center"><div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-5 text-3xl" style="background:rgba(232,255,254,0.04);border:2px solid rgba(232,255,254,0.2);color:var(--wh);box-shadow:0 0 30px rgba(232,255,254,0.1);"><i class="fa-solid fa-sack-dollar"></i></div><h4 class="font-bold text-white text-xl uppercase tracking-wider mb-3" style="font-weight:700;">04. Bankroll Growth</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">You wake up, check your dashboard, and see the profits. The law of large numbers guarantees that placing thousands of +EV bets mathematically drains the house over time.</p><div class="mt-4 pt-4 mn text-[10px] uppercase tracking-widest" style="border-top:1px solid rgba(232,255,254,0.05);color:var(--wh);">Outcome: Profit</div></div>
+    </div>
+  </div>
 </section>
 
-<section id="features" class="py-32 relative overflow-hidden bg-[#050505] border-y border-[rgba(255,255,255,0.05)]">
-    <div class="absolute inset-0 z-0 opacity-10 cyber-grid pointer-events-none"></div>
-
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        
-        <div class="text-center mb-20 reveal">
-            <h2 class="text-[var(--bandit-red)] font-mono tracking-widest uppercase text-xs mb-3">System Capabilities</h2>
-            <h3 class="text-5xl md:text-6xl font-display font-bold text-white mb-6 uppercase tracking-wide">THE <span class="text-gradient-red">ARSENAL</span></h3>
-            <p class="text-gray-400 max-w-3xl mx-auto font-light leading-relaxed text-lg">When you pay $500 a month, you aren't paying for a Discord role. You are leasing institutional computational power. Here is what the Bandit brings to the table.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            <div class="glass-panel p-8 rounded-sm card-hover reveal hover-target group border-gray-800">
-                <div class="w-16 h-16 rounded bg-[#0f0f11] border border-[rgba(225,29,72,0.3)] flex items-center justify-center text-[var(--bandit-red)] text-3xl mb-8 shadow-[0_0_20px_rgba(225,29,72,0.1)] group-hover:bg-[var(--bandit-red)] group-hover:text-white transition-all duration-500">
-                    <i class="fa-solid fa-robot"></i>
-                </div>
-                <h4 class="text-2xl font-bold text-white mb-3 font-display uppercase tracking-widest">Full Automation</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    The bot links to your PrizePicks and Underdog accounts. When it finds an edge, it constructs the slip and executes the bet automatically while you sleep.
-                </p>
-            </div>
-
-            <div class="glass-panel p-8 rounded-sm card-hover reveal delay-100 hover-target group border-gray-800">
-                <div class="w-16 h-16 rounded bg-[#0f0f11] border border-[rgba(16,185,129,0.3)] flex items-center justify-center text-[var(--cash-green)] text-3xl mb-8 shadow-[0_0_20px_rgba(16,185,129,0.1)] group-hover:bg-[var(--cash-green)] group-hover:text-black transition-all duration-500">
-                    <i class="fa-solid fa-chart-pie"></i>
-                </div>
-                <h4 class="text-2xl font-bold text-white mb-3 font-display uppercase tracking-widest">Kelly Criterion Sizing</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    The AI dynamically adjusts your bet sizes based on your total bankroll and the specific mathematical probability of each play to prevent ruin.
-                </p>
-            </div>
-
-            <div class="glass-panel p-8 rounded-sm card-hover reveal delay-200 hover-target group border-gray-800">
-                <div class="w-16 h-16 rounded bg-[#0f0f11] border border-[rgba(225,29,72,0.3)] flex items-center justify-center text-white text-3xl mb-8 shadow-[0_0_20px_rgba(255,255,255,0.1)] group-hover:bg-white group-hover:text-black transition-all duration-500">
-                    <i class="fa-solid fa-bolt"></i>
-                </div>
-                <h4 class="text-2xl font-bold text-white mb-3 font-display uppercase tracking-widest">Sub-Second Scraping</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    Our servers are co-located near major sportsbook data centers. We detect line movements and injury news milliseconds before the public markets adjust.
-                </p>
-            </div>
-
-            <div class="glass-panel p-8 rounded-sm card-hover reveal delay-300 hover-target group border-gray-800">
-                <div class="w-16 h-16 rounded bg-[#0f0f11] border border-[rgba(225,29,72,0.3)] flex items-center justify-center text-[var(--bandit-red)] text-3xl mb-8 shadow-[0_0_20px_rgba(225,29,72,0.1)] group-hover:bg-[var(--bandit-red)] group-hover:text-white transition-all duration-500">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <h4 class="text-2xl font-bold text-white mb-3 font-display uppercase tracking-widest">Ban Protection</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    Sportsbooks hate winners. The Bandit protocol uses humanized delay scripts and IP masking to prevent your high-profit accounts from getting limited or banned.
-                </p>
-            </div>
-            
-            <div class="glass-panel p-8 rounded-sm card-hover reveal hover-target group border-gray-800 lg:col-start-2">
-                <div class="w-16 h-16 rounded bg-[#0f0f11] border border-[rgba(16,185,129,0.3)] flex items-center justify-center text-[var(--cash-green)] text-3xl mb-8 shadow-[0_0_20px_rgba(16,185,129,0.1)] group-hover:bg-[var(--cash-green)] group-hover:text-black transition-all duration-500">
-                    <i class="fa-solid fa-scale-balanced"></i>
-                </div>
-                <h4 class="text-2xl font-bold text-white mb-3 font-display uppercase tracking-widest">Arbitrage Scanner</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light">
-                    Guaranteed profit. The bot finds discrepancies between two books, allowing you to bet both sides of the same game and lock in a risk-free return.
-                </p>
-            </div>
-
-            <div class="glass-panel p-8 rounded-sm card-hover reveal delay-100 relative overflow-hidden hover-target border-[var(--bandit-red)] shadow-[0_0_30px_rgba(225,29,72,0.1)] group">
-                <div class="absolute top-0 right-0 bg-[var(--bandit-red)] text-white text-[10px] font-bold px-4 py-2 rounded-bl-lg uppercase tracking-widest font-mono z-10 shadow-lg">Passive Income</div>
-                <div class="w-16 h-16 rounded bg-[#0f0f11] border border-[var(--bandit-red)] flex items-center justify-center text-[var(--bandit-red)] text-3xl mb-8 group-hover:bg-[var(--bandit-red)] group-hover:text-white transition-all duration-500 relative z-10">
-                    <i class="fa-solid fa-handshake-simple"></i>
-                </div>
-                <h4 class="text-2xl font-bold text-white mb-3 font-display uppercase tracking-widest relative z-10">30% Affiliate Engine</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-light relative z-10">
-                    We reward our syndicate. Share your custom Whop link and earn a massive <strong class="text-[var(--bandit-red)]">30% recurring commission</strong> ($150/mo) for every Pro user you refer.
-                </p>
-            </div>
-
-        </div>
+<!-- TERMINAL TABLE -->
+<section id="terminal" class="py-24 relative overflow-hidden" style="background:var(--slab);">
+  <div class="cl absolute top-0 left-0 right-0"></div>
+  <div class="max-w-[90rem] mx-auto px-5 lg:px-8 relative z-10">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-10 rv">
+      <div><div class="mn text-xs uppercase tracking-widest mb-2" style="color:var(--c2);">Terminal Output</div><h3 class="font-bold leading-none uppercase" style="font-size:clamp(2rem,4vw,3.5rem);font-weight:700;">LIVE <span class="ct">INTERCEPTION FEED</span></h3><p class="mn text-xs mt-2 uppercase tracking-widest" style="color:rgba(232,255,254,0.3);">Displaying last 8 automated executions...</p></div>
+      <div class="mt-6 md:mt-0 flex items-center gap-3 mn text-xs text-white px-4 py-2" style="background:rgba(0,255,159,0.08);border:1px solid var(--grn);"><span class="gd"></span> BOT STATUS: SNIPING</div>
     </div>
+    <div class="glass rv" style="border:1px solid rgba(232,255,254,0.08);">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse whitespace-nowrap">
+          <thead><tr class="border-b mn text-[11px] uppercase tracking-widest" style="background:var(--obs);border-color:rgba(0,245,255,0.2);color:rgba(232,255,254,0.35);"><th class="p-4">Time (EST)</th><th class="p-4">Target Book</th><th class="p-4">Event / Matchup</th><th class="p-4">Market (Prop)</th><th class="p-4">Line / Odds</th><th class="p-4">Kelly Stake</th><th class="p-4 text-right">Mathematical EV</th></tr></thead>
+          <tbody class="mn text-xs" style="color:rgba(232,255,254,0.6);">
+            <tr class="trow"><td class="p-4" style="color:rgba(232,255,254,0.3);">18:42:01.112</td><td class="p-4"><span class="px-2 py-1 text-[10px] uppercase font-bold" style="background:rgba(250,204,21,0.1);color:#FBBF24;border:1px solid rgba(250,204,21,0.2);">PrizePicks</span></td><td class="p-4 font-bold text-white">NBA: LAL @ DEN</td><td class="p-4">N. Jokic OVER 28.5 Pts</td><td class="p-4 font-bold text-white">-110</td><td class="p-4" style="color:rgba(232,255,254,0.4);">$125.00 (2.5u)</td><td class="p-4 text-right font-bold" style="color:var(--grn);">+ 8.42%</td></tr>
+            <tr class="trow"><td class="p-4" style="color:rgba(232,255,254,0.3);">18:45:13.405</td><td class="p-4"><span class="px-2 py-1 text-[10px] uppercase font-bold" style="background:rgba(250,204,21,0.1);color:#FCD34D;border:1px solid rgba(250,204,21,0.2);">Underdog</span></td><td class="p-4 font-bold text-white">MLB: NYY @ BOS</td><td class="p-4">A. Judge OVER 1.5 Total Bases</td><td class="p-4 font-bold text-white">+130</td><td class="p-4" style="color:rgba(232,255,254,0.4);">$75.00 (1.5u)</td><td class="p-4 text-right font-bold" style="color:var(--grn);">+ 6.15%</td></tr>
+            <tr class="trow" style="background:rgba(0,255,159,0.02);"><td class="p-4" style="color:rgba(232,255,254,0.3);">18:51:09.992</td><td class="p-4"><span class="px-2 py-1 text-[10px] uppercase font-bold" style="background:rgba(59,130,246,0.1);color:#93C5FD;border:1px solid rgba(59,130,246,0.2);">FanDuel</span></td><td class="p-4 font-bold text-white">NFL: KC @ BAL</td><td class="p-4">P. Mahomes OVER 2.5 Pass TD</td><td class="p-4 font-bold text-white">+155</td><td class="p-4" style="color:rgba(232,255,254,0.4);">$100.00 (2.0u)</td><td class="p-4 text-right font-bold" style="color:var(--grn);">+ 9.80% &#x1F525;</td></tr>
+            <tr class="trow"><td class="p-4" style="color:rgba(232,255,254,0.3);">18:58:33.210</td><td class="p-4"><span class="px-2 py-1 text-[10px] uppercase font-bold" style="background:rgba(74,222,128,0.1);color:#86EFAC;border:1px solid rgba(74,222,128,0.2);">DraftKings</span></td><td class="p-4 font-bold text-white">NHL: EDM @ FLA</td><td class="p-4">C. McDavid OVER 3.5 SOG</td><td class="p-4 font-bold text-white">-125</td><td class="p-4" style="color:rgba(232,255,254,0.4);">$150.00 (3.0u)</td><td class="p-4 text-right font-bold" style="color:var(--grn);">+ 5.22%</td></tr>
+            <tr class="trow"><td class="p-4" style="color:rgba(232,255,254,0.3);">19:04:12.774</td><td class="p-4"><span class="px-2 py-1 text-[10px] uppercase font-bold" style="background:rgba(250,204,21,0.1);color:#FBBF24;border:1px solid rgba(250,204,21,0.2);">PrizePicks</span></td><td class="p-4 font-bold text-white">CSGO: NAVI vs FAZE</td><td class="p-4">s1mple OVER 38.5 Kills (Maps 1-2)</td><td class="p-4 font-bold text-white">-119</td><td class="p-4" style="color:rgba(232,255,254,0.4);">$100.00 (2.0u)</td><td class="p-4 text-right font-bold" style="color:var(--grn);">+ 7.10%</td></tr>
+            <tr class="trow"><td class="p-4" style="color:rgba(232,255,254,0.3);">19:12:45.002</td><td class="p-4"><span class="px-2 py-1 text-[10px] uppercase font-bold" style="background:rgba(59,130,246,0.1);color:#93C5FD;border:1px solid rgba(59,130,246,0.2);">FanDuel</span></td><td class="p-4 font-bold text-white">NBA: MIA @ PHI</td><td class="p-4">J. Embiid UNDER 11.5 Rebounds</td><td class="p-4 font-bold text-white">-105</td><td class="p-4" style="color:rgba(232,255,254,0.4);">$125.00 (2.5u)</td><td class="p-4 text-right font-bold" style="color:var(--grn);">+ 6.05%</td></tr>
+            <tr class="trow" style="background:rgba(0,245,255,0.02);"><td class="p-4" style="color:rgba(232,255,254,0.3);">19:18:09.333</td><td class="p-4"><span class="px-2 py-1 text-[10px] uppercase font-bold" style="background:rgba(232,255,254,0.06);color:var(--wh);border:1px solid rgba(232,255,254,0.15);">Pinnacle</span></td><td class="p-4 font-bold text-white">TENNIS: ALCARAZ vs SINNER</td><td class="p-4">Alcaraz Moneyline (Arb Opportunity)</td><td class="p-4 font-bold text-white">+115</td><td class="p-4" style="color:rgba(232,255,254,0.4);">$500.00 (Arb Max)</td><td class="p-4 text-right font-bold" style="color:var(--cyan);">ARB 3.4% &#x1F512;</td></tr>
+            <tr><td class="p-4" style="color:rgba(232,255,254,0.3);">19:22:55.881</td><td class="p-4"><span class="px-2 py-1 text-[10px] uppercase font-bold" style="background:rgba(250,204,21,0.1);color:#FCD34D;border:1px solid rgba(250,204,21,0.2);">Underdog</span></td><td class="p-4 font-bold text-white">NBA: GSW @ PHX</td><td class="p-4">S. Curry OVER 4.5 3PT Made</td><td class="p-4 font-bold text-white">-140</td><td class="p-4" style="color:rgba(232,255,254,0.4);">$150.00 (3.0u)</td><td class="p-4 text-right font-bold" style="color:var(--grn);">+ 5.88%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="px-5 py-4 flex flex-col md:flex-row justify-between items-center gap-4" style="background:var(--obs);border-top:1px solid rgba(232,255,254,0.06);">
+        <div class="mn text-xs" style="color:rgba(232,255,254,0.3);">Showing 8 of 1,245 automated entries today.</div>
+        <a href="#pricing" class="mn text-sm font-bold uppercase tracking-widest hover:text-white transition-colors" style="color:var(--cyan);">[ UNLOCK FULL TERMINAL ACCESS ]</a>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section id="reviews" class="py-32 relative overflow-hidden bg-[#0f0f11]">
-    <div class="glow-orb-red top-1/2 right-[-20%] transform -translate-y-1/2 opacity-20"></div>
-
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        
-        <div class="flex flex-col md:flex-row justify-between items-end mb-20 reveal">
-            <div>
-                <h2 class="text-[var(--bandit-red)] font-mono tracking-widest uppercase text-xs mb-4">Declassified Intel</h2>
-                <h3 class="text-5xl md:text-6xl font-display font-bold text-white leading-[0.9] uppercase tracking-wide">
-                    OPERATOR <br><span class="text-gradient-red">LOGS.</span>
-                </h3>
-            </div>
-            <div class="mt-8 md:mt-0 glass-panel px-8 py-4 border border-[var(--bandit-red)] flex items-center gap-5 rounded bg-[#050505]">
-                <div class="flex text-[var(--bandit-red)] text-xl">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-                <div class="text-white font-bold font-mono text-sm">5.0 <span class="text-gray-500 font-normal">/ WHOP VERIFIED</span></div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <div class="glass-panel p-10 card-hover reveal relative overflow-hidden hover-target border-gray-800">
-                <i class="fa-solid fa-quote-right absolute top-8 right-8 text-6xl text-gray-800 opacity-30"></i>
-                <div class="flex text-[var(--bandit-red)] text-sm mb-8"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                <p class="text-gray-300 font-light leading-loose mb-10 relative z-10 text-sm font-mono">"I thought $500 a month was insane until I plugged in my PrizePicks account. The bot paid for its entire yearly subscription in the first 4 days. Full automation while I'm at my 9-5. Literally free money."</p>
-                <div class="flex items-center gap-5 border-t border-[rgba(225,29,72,0.1)] pt-8">
-                    <div class="w-12 h-12 rounded bg-[#050505] border border-[var(--bandit-red)] flex items-center justify-center font-bold text-white font-display text-2xl shadow-[0_0_15px_rgba(225,29,72,0.3)]">MK</div>
-                    <div>
-                        <h5 class="text-white font-bold text-base tracking-wide font-display text-xl uppercase">Mike K.</h5>
-                        <p class="text-[10px] text-[var(--bandit-red)] tracking-widest uppercase font-mono mt-1">Pro User</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel p-10 card-hover reveal delay-100 relative overflow-hidden border-[var(--bandit-red)] shadow-[0_0_40px_rgba(225,29,72,0.15)] transform md:-translate-y-4 hover-target">
-                <div class="absolute top-0 right-0 bg-[var(--bandit-red)] text-white text-[10px] font-bold px-4 py-2 rounded-bl uppercase tracking-wider z-20 font-mono shadow-lg">Whale Status</div>
-                <i class="fa-solid fa-quote-right absolute top-8 right-8 text-6xl text-[rgba(225,29,72,0.1)]"></i>
-                <div class="flex text-[var(--bandit-red)] text-sm mb-8"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                <p class="text-gray-300 font-light leading-loose mb-10 relative z-10 text-sm font-mono">"The Kelly Criterion bankroll management is what makes this a 1% tool. Other bots blow your account on a bad variance streak. Bookie Bandit scales your sizing dynamically. Up 210 units this NBA season."</p>
-                <div class="flex items-center gap-5 border-t border-[rgba(225,29,72,0.2)] pt-8">
-                    <div class="w-12 h-12 rounded bg-[var(--bandit-red)] flex items-center justify-center font-bold text-white font-display text-2xl shadow-lg">JP</div>
-                    <div>
-                        <h5 class="text-white font-bold text-base tracking-wide font-display text-xl uppercase">Jordan P.</h5>
-                        <p class="text-[10px] text-white tracking-widest uppercase font-mono mt-1">Pro User</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel p-10 card-hover reveal delay-200 relative overflow-hidden hover-target border-gray-800">
-                <i class="fa-solid fa-quote-right absolute top-8 right-8 text-6xl text-gray-800 opacity-30"></i>
-                <div class="flex text-[var(--bandit-red)] text-sm mb-8"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                <p class="text-gray-300 font-light leading-loose mb-10 relative z-10 text-sm font-mono">"Started in the Free Discord to see if it was legit. The free slips hit at a 68% rate. Upgraded to Pro immediately. The arbitrage scanner alone is worth the price tag. Pure mathematical dominance."</p>
-                <div class="flex items-center gap-5 border-t border-[rgba(225,29,72,0.1)] pt-8">
-                    <div class="w-12 h-12 rounded bg-[#050505] border border-[var(--bandit-red)] flex items-center justify-center font-bold text-white font-display text-2xl shadow-[0_0_15px_rgba(225,29,72,0.3)]">SJ</div>
-                    <div>
-                        <h5 class="text-white font-bold text-base tracking-wide font-display text-xl uppercase">Sarah J.</h5>
-                        <p class="text-[10px] text-[var(--bandit-red)] tracking-widest uppercase font-mono mt-1">Pro User</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="glass-panel p-10 card-hover reveal relative overflow-hidden hover-target border-gray-800 hidden md:block">
-                <i class="fa-solid fa-quote-right absolute top-8 right-8 text-6xl text-gray-800 opacity-30"></i>
-                <div class="flex text-[var(--bandit-red)] text-sm mb-8"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                <p class="text-gray-300 font-light leading-loose mb-10 relative z-10 text-sm font-mono">"I run a syndicate. We moved our entire operation to the Bandit protocol. The sub-second scraping against Pinnacle lines gives us the edge we need. Absolutely ruthless algorithm."</p>
-                <div class="flex items-center gap-5 border-t border-[rgba(225,29,72,0.1)] pt-8">
-                    <div class="w-12 h-12 rounded bg-[#050505] border border-gray-600 flex items-center justify-center font-bold text-white font-display text-2xl shadow-lg">TC</div>
-                    <div>
-                        <h5 class="text-white font-bold text-base tracking-wide font-display text-xl uppercase">Tim C.</h5>
-                        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-mono mt-1">Syndicate Lead</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel p-10 card-hover reveal delay-100 relative overflow-hidden hover-target border-gray-800 hidden md:block">
-                <i class="fa-solid fa-quote-right absolute top-8 right-8 text-6xl text-gray-800 opacity-30"></i>
-                <div class="flex text-[var(--bandit-red)] text-sm mb-8"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                <p class="text-gray-300 font-light leading-loose mb-10 relative z-10 text-sm font-mono">"Referred 2 of my betting buddies using the 30% affiliate link. Now I'm getting $300 a month back from Whop, so my bot cost is essentially zero. Big brain move by the dev team."</p>
-                <div class="flex items-center gap-5 border-t border-[rgba(225,29,72,0.1)] pt-8">
-                    <div class="w-12 h-12 rounded bg-[#050505] border border-gray-600 flex items-center justify-center font-bold text-white font-display text-2xl shadow-lg">AL</div>
-                    <div>
-                        <h5 class="text-white font-bold text-base tracking-wide font-display text-xl uppercase">Alex L.</h5>
-                        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-mono mt-1">Pro User</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel p-10 card-hover reveal delay-200 relative overflow-hidden hover-target border-gray-800 hidden lg:block">
-                <i class="fa-solid fa-quote-right absolute top-8 right-8 text-6xl text-gray-800 opacity-30"></i>
-                <div class="flex text-[var(--bandit-red)] text-sm mb-8"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                <p class="text-gray-300 font-light leading-loose mb-10 relative z-10 text-sm font-mono">"If you're tired of tailing 'gurus' who delete their losing slips, get this bot. It's cold, calculating mathematics. It doesn't care about teams, only numbers. Easiest money printer online."</p>
-                <div class="flex items-center gap-5 border-t border-[rgba(225,29,72,0.1)] pt-8">
-                    <div class="w-12 h-12 rounded bg-[#050505] border border-gray-600 flex items-center justify-center font-bold text-white font-display text-2xl shadow-lg">EW</div>
-                    <div>
-                        <h5 class="text-white font-bold text-base tracking-wide font-display text-xl uppercase">Ethan W.</h5>
-                        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-mono mt-1">Pro User</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<!-- FEATURES -->
+<section id="features" class="py-28 relative overflow-hidden" style="background:var(--obs);border-top:1px solid rgba(232,255,254,0.06);">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+    <div class="text-center mb-14 rv"><div class="mn text-xs uppercase tracking-[.22em] mb-3" style="color:var(--c2);">System Capabilities</div><h3 class="font-bold leading-none uppercase" style="font-size:clamp(2.5rem,5vw,4.5rem);font-weight:700;">THE <span class="ct">ARSENAL</span></h3><p class="max-w-2xl mx-auto mt-5 text-lg leading-relaxed" style="color:rgba(232,255,254,0.4);">When you pay $500 a month, you aren't paying for a Discord role. You are leasing institutional computational power. Here is what the Bandit brings to the table.</p></div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="card p-7 rv"><div class="w-14 h-14 flex items-center justify-center text-3xl mb-6" style="background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">&#x1F916;</div><div class="mn text-xs mb-2 uppercase tracking-[.2em]" style="color:rgba(0,245,255,0.4);">CAP.01</div><h4 class="font-bold text-white text-xl uppercase tracking-widest mb-3" style="font-weight:700;">Full Automation</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">The bot links to your PrizePicks and Underdog accounts. When it finds an edge, it constructs the slip and executes the bet automatically while you sleep.</p></div>
+      <div class="card p-7 rv"><div class="w-14 h-14 flex items-center justify-center text-3xl mb-6" style="background:rgba(0,255,159,0.06);border:1px solid rgba(0,255,159,0.2);color:var(--grn);">&#x1F4CA;</div><div class="mn text-xs mb-2 uppercase tracking-[.2em]" style="color:rgba(0,255,159,0.4);">CAP.02</div><h4 class="font-bold text-white text-xl uppercase tracking-widest mb-3" style="font-weight:700;">Kelly Criterion Sizing</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">The AI dynamically adjusts your bet sizes based on your total bankroll and the specific mathematical probability of each play to prevent ruin.</p></div>
+      <div class="card p-7 rv"><div class="w-14 h-14 flex items-center justify-center text-3xl mb-6" style="background:rgba(232,255,254,0.04);border:1px solid rgba(232,255,254,0.12);color:var(--wh);">&#x26A1;</div><div class="mn text-xs mb-2 uppercase tracking-[.2em]" style="color:rgba(232,255,254,0.3);">CAP.03</div><h4 class="font-bold text-white text-xl uppercase tracking-widest mb-3" style="font-weight:700;">Sub-Second Scraping</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">Our servers are co-located near major sportsbook data centers. We detect line movements and injury news milliseconds before the public markets adjust.</p></div>
+      <div class="card p-7 rv"><div class="w-14 h-14 flex items-center justify-center text-3xl mb-6" style="background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">&#x1F6E1;&#xFE0F;</div><div class="mn text-xs mb-2 uppercase tracking-[.2em]" style="color:rgba(0,245,255,0.4);">CAP.04</div><h4 class="font-bold text-white text-xl uppercase tracking-widest mb-3" style="font-weight:700;">Ban Protection</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">Sportsbooks hate winners. The Bandit protocol uses humanized delay scripts and IP masking to prevent your high-profit accounts from getting limited or banned.</p></div>
+      <div class="card p-7 rv lg:col-start-2"><div class="w-14 h-14 flex items-center justify-center text-3xl mb-6" style="background:rgba(0,255,159,0.06);border:1px solid rgba(0,255,159,0.2);color:var(--grn);">&#x2696;&#xFE0F;</div><div class="mn text-xs mb-2 uppercase tracking-[.2em]" style="color:rgba(0,255,159,0.4);">CAP.05</div><h4 class="font-bold text-white text-xl uppercase tracking-widest mb-3" style="font-weight:700;">Arbitrage Scanner</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">Guaranteed profit. The bot finds discrepancies between two books, allowing you to bet both sides of the same game and lock in a risk-free return.</p></div>
+      <div class="card p-7 rv" style="border-color:rgba(0,245,255,0.25);"><div class="absolute top-0 right-0 mn font-bold text-black text-[9px] px-4 py-2 uppercase tracking-widest" style="background:var(--cyan);">Passive Income</div><div class="w-14 h-14 flex items-center justify-center text-3xl mb-6 mt-4" style="background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.25);color:var(--cyan);">&#x1F91D;</div><div class="mn text-xs mb-2 uppercase tracking-[.2em]" style="color:rgba(0,245,255,0.4);">CAP.06</div><h4 class="font-bold text-white text-xl uppercase tracking-widest mb-3" style="font-weight:700;">30% Affiliate Engine</h4><p class="text-sm leading-relaxed" style="color:rgba(232,255,254,0.45);">We reward our syndicate. Share your custom Whop link and earn a massive <strong style="color:var(--cyan);">30% recurring commission</strong> ($150/mo) for every Pro user you refer.</p></div>
     </div>
+  </div>
 </section>
 
-<section id="pricing" class="py-32 relative bg-[#050505] border-y border-[rgba(225,29,72,0.1)] overflow-hidden">
-    <div class="glow-orb-red top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-30"></div>
-    <div class="absolute inset-0 cyber-grid opacity-10 pointer-events-none"></div>
-
-    <div class="max-w-6xl mx-auto px-6 lg:px-8 relative z-10">
-        
-        <div class="text-center mb-20 reveal">
-            <div class="flex items-center justify-center gap-4 mb-6">
-                <div class="w-12 h-[2px] bg-[var(--bandit-red)]"></div>
-                <span class="text-[var(--bandit-red)] font-mono tracking-widest uppercase text-xs">Access Keys</span>
-                <div class="w-12 h-[2px] bg-[var(--bandit-red)]"></div>
-            </div>
-            <h3 class="text-5xl md:text-7xl font-display font-bold text-white mb-6 uppercase">CONNECT TO <span class="text-gradient-red">THE MAINFRAME</span></h3>
-            <p class="text-gray-400 max-w-2xl mx-auto font-light text-lg">Stop guessing. Start automating. Choose your clearance level and let the algorithm do the heavy lifting.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-            
-            <div class="glass-panel rounded overflow-hidden border border-gray-800 hover:border-gray-500 transition-all duration-500 reveal flex flex-col relative z-10 hover-target group">
-                <div class="p-12 border-b border-[rgba(255,255,255,0.05)] bg-[#0a0a0a]">
-                    <div class="flex items-center justify-between mb-6">
-                        <h4 class="font-display text-4xl text-white font-bold uppercase tracking-widest">Free Discord</h4>
-                        <i class="fa-brands fa-discord text-gray-500 text-3xl group-hover:text-white transition-colors"></i>
-                    </div>
-                    <p class="text-gray-400 text-sm mb-10 font-mono leading-relaxed">Test the waters. Join the community and get a taste of the Bandit's power.</p>
-                    <div class="flex items-end gap-3">
-                        <span class="text-6xl font-display font-black text-white">FREE</span>
-                    </div>
-                    <div class="text-gray-500 font-bold mt-3 uppercase tracking-widest text-[10px] font-mono">Lifetime Access</div>
-                </div>
-                
-                <div class="p-12 flex-1 flex flex-col bg-[#0f0f11]">
-                    <ul class="space-y-6 mb-12 flex-1">
-                        <li class="flex items-start gap-4 text-gray-300 text-sm font-mono"><i class="fa-solid fa-check text-gray-500 mt-1 text-lg"></i> <span class="leading-relaxed">Access to the General Chat</span></li>
-                        <li class="flex items-start gap-4 text-gray-300 text-sm font-mono"><i class="fa-solid fa-check text-gray-500 mt-1 text-lg"></i> <span class="leading-relaxed">1-2 Free EV Slips per Week</span></li>
-                        <li class="flex items-start gap-4 text-gray-300 text-sm font-mono"><i class="fa-solid fa-check text-gray-500 mt-1 text-lg"></i> <span class="leading-relaxed">Basic Sports Betting Education</span></li>
-                        <li class="flex items-start gap-4 text-gray-500 text-sm font-mono opacity-50"><i class="fa-solid fa-xmark mt-1 text-lg"></i> <span class="leading-relaxed line-through">Automated Bot Execution</span></li>
-                    </ul>
-                    <a href="https://whop.com/bookiebandit/free-discord-access-91-7a4f?a=digitalartlab" target="_blank" class="w-full py-5 rounded border border-gray-600 text-gray-300 hover:bg-white hover:text-black hover:border-white font-display font-bold tracking-widest text-center transition-all text-2xl uppercase">
-                        ENTER THE LOBBY
-                    </a>
-                </div>
-            </div>
-
-            <div class="glass-panel rounded overflow-hidden border-2 border-[var(--bandit-red)] shadow-[0_0_50px_rgba(225,29,72,0.15)] hover:shadow-[0_0_80px_rgba(225,29,72,0.3)] transition-all duration-500 reveal delay-100 flex flex-col relative transform md:-translate-y-6 z-20 hover-target">
-                <div class="absolute top-0 right-0 bg-[var(--bandit-red)] text-white font-black text-[10px] px-6 py-2 rounded-bl uppercase tracking-widest font-mono z-10 shadow-lg">The Arsenal</div>
-                
-                <div class="p-12 border-b border-[rgba(225,29,72,0.2)] bg-[#050505] relative overflow-hidden">
-                    <div class="absolute inset-0 cyber-grid opacity-20 pointer-events-none"></div>
-                    <div class="flex items-center justify-between mb-6 relative z-10">
-                        <h4 class="font-display text-4xl text-white font-bold uppercase tracking-widest">Bookie Bandit Pro</h4>
-                        <i class="fa-solid fa-robot text-[var(--bandit-red)] text-3xl animate-pulse"></i>
-                    </div>
-                    <p class="text-[var(--bandit-red)] text-sm font-medium mb-10 relative z-10 leading-relaxed font-mono">The fully automated, institutional-grade AI betting engine.</p>
-                    <div class="flex items-end gap-3 relative z-10">
-                        <span class="text-7xl font-display font-black text-white">$499.99</span>
-                    </div>
-                    <div class="text-[var(--bandit-red)] font-bold mt-3 uppercase tracking-widest text-[10px] font-mono relative z-10">Billed Monthly</div>
-                </div>
-                
-                <div class="p-12 flex-1 flex flex-col bg-[#0a0a0a]">
-                    <ul class="space-y-6 mb-12 flex-1">
-                        <li class="flex items-start gap-4 text-white font-bold text-sm font-mono"><i class="fa-solid fa-bolt text-[var(--bandit-red)] mt-1 text-lg"></i> <span class="leading-relaxed">Full Bot Auto-Execution (PrizePicks, Underdog)</span></li>
-                        <li class="flex items-start gap-4 text-gray-300 text-sm font-mono"><i class="fa-solid fa-check text-[var(--cash-green)] mt-1 text-lg"></i> <span class="leading-relaxed">Dynamic Kelly Criterion Sizing</span></li>
-                        <li class="flex items-start gap-4 text-gray-300 text-sm font-mono"><i class="fa-solid fa-check text-[var(--cash-green)] mt-1 text-lg"></i> <span class="leading-relaxed">Sub-Second Live Arbitrage Scanner</span></li>
-                        <li class="flex items-start gap-4 text-gray-300 text-sm font-mono"><i class="fa-solid fa-check text-[var(--cash-green)] mt-1 text-lg"></i> <span class="leading-relaxed">VIP Direct Developer Support</span></li>
-                        <li class="flex items-start gap-4 text-white font-bold text-sm font-mono"><i class="fa-solid fa-link text-[var(--bandit-red)] mt-1 text-lg"></i> <span class="leading-relaxed">30% Massive Affiliate Engine ($150/mo per ref)</span></li>
-                    </ul>
-                    <a href="https://whop.com/bookiebandit/bookie-bandit-pro?a=digitalartlab" target="_blank" class="w-full py-5 rounded btn-bandit font-display font-bold tracking-widest text-center transition-all text-3xl uppercase shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:scale-105">
-                        ACTIVATE THE BOT
-                    </a>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="mt-20 text-center reveal delay-200 border-t border-gray-800 pt-12">
-            <a href="https://whop.com/bookiebandit?a=digitalartlab" target="_blank" class="text-[var(--bandit-red)] hover:text-white font-bold text-sm font-mono tracking-widest uppercase transition-colors hover-target">>>> Access the Main Terminal Hub <<<</a>
-        </div>
+<!-- TIKTOK OPERATOR FEED -->
+<section class="py-28 relative overflow-hidden" style="background:var(--ink);">
+  <div class="cl absolute top-0 left-0 right-0"></div>
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-14 rv">
+      <div><div class="flex items-center gap-2 mb-4"><div class="gd"></div><span class="mn text-xs uppercase tracking-[.25em] font-bold" style="color:var(--grn);">Live Intercepts &#xB7; Member Wins</span></div><h3 class="font-bold leading-none uppercase" style="font-size:clamp(2.5rem,5vw,4.5rem);font-weight:700;line-height:.85;"><span class="text-white">OPERATOR</span><br/><span class="ct">FEED.</span></h3></div>
+      <p class="mn text-xs max-w-xs mt-6 md:mt-0 leading-relaxed uppercase" style="color:rgba(232,255,254,0.25);">Replace TikTok iframe src links with Bookie Bandit&#x2019;s own videos.</p>
     </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="rv glass p-3" style="border:1px solid rgba(0,245,255,0.15);">
+        <div class="ttb w-full" style="aspect-ratio:9/16;"><!-- REPLACE: bot auto-placing bet EV alert reel --><iframe src="https://www.tiktok.com/embed/v2/7285188806950276384" class="w-full h-full" allow="encrypted-media;" style="border:none;border-radius:16px;"></iframe></div>
+        <div class="mt-3"><h4 class="font-bold text-white uppercase tracking-wide text-sm" style="font-weight:700;">Bot Auto-Placed &#x26A1;</h4><p class="mn text-xs mt-1" style="color:rgba(232,255,254,0.3);">+8.4% EV &#xB7; PrizePicks</p></div>
+      </div>
+      <div class="rv glass p-3" style="border:1px solid rgba(0,245,255,0.15);transition-delay:.1s;">
+        <div class="ttb w-full" style="aspect-ratio:9/16;"><!-- REPLACE: bankroll growth +210 units reel --><iframe src="https://www.tiktok.com/embed/v2/7300300438181317934" class="w-full h-full" allow="encrypted-media;" style="border:none;border-radius:16px;"></iframe></div>
+        <div class="mt-3"><h4 class="font-bold text-white uppercase tracking-wide text-sm" style="font-weight:700;">+210 Units &#x1F4C8;</h4><p class="mn text-xs mt-1" style="color:rgba(232,255,254,0.3);">NBA season verified</p></div>
+      </div>
+      <div class="rv glass p-3" style="border:1px solid rgba(0,245,255,0.15);transition-delay:.2s;">
+        <div class="ttb w-full" style="aspect-ratio:9/16;"><!-- REPLACE: arbitrage scanner locked reel --><iframe src="https://www.tiktok.com/embed/v2/7145839958172699946" class="w-full h-full" allow="encrypted-media;" style="border:none;border-radius:16px;"></iframe></div>
+        <div class="mt-3"><h4 class="font-bold text-white uppercase tracking-wide text-sm" style="font-weight:700;">ARB Locked &#x1F512;</h4><p class="mn text-xs mt-1" style="color:rgba(232,255,254,0.3);">3.4% risk-free return</p></div>
+      </div>
+      <div class="rv glass p-3" style="border:1px solid rgba(0,255,159,0.15);transition-delay:.3s;">
+        <div class="ttb w-full" style="aspect-ratio:9/16;"><!-- REPLACE: affiliate passive income reel --><iframe src="https://www.tiktok.com/embed/v2/7127432984064697605" class="w-full h-full" allow="encrypted-media;" style="border:none;border-radius:16px;"></iframe></div>
+        <div class="mt-3"><h4 class="font-bold text-white uppercase tracking-wide text-sm" style="font-weight:700;">Affiliate $300/mo &#x1F4B8;</h4><p class="mn text-xs mt-1" style="color:rgba(232,255,254,0.3);">Bot cost covered by refs</p></div>
+      </div>
+    </div>
+    <p class="text-center mn text-xs mt-6 rv" style="color:rgba(232,255,254,0.18);">&#x2191; Replace TikTok iframe src values with Bookie Bandit&#x2019;s own video URLs &#x2191;</p>
+  </div>
 </section>
 
-<section class="py-32 relative overflow-hidden bg-[#0f0f11]">
-    <div class="max-w-4xl mx-auto px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-20 reveal">
-            <h2 class="text-5xl md:text-6xl font-display font-bold text-white uppercase mb-6 tracking-widest">Interrogation <span class="text-gradient-red">(FAQ)</span></h2>
-            <div class="w-24 h-[2px] bg-[var(--bandit-red)] mx-auto rounded"></div>
-        </div>
-
-        <div class="space-y-4">
-            
-            <div class="glass-panel border border-gray-800 rounded overflow-hidden reveal hover-target faq-container">
-                <button class="w-full px-8 py-6 text-left flex justify-between items-center focus:outline-none faq-btn transition-colors hover:bg-[rgba(255,255,255,0.02)]">
-                    <span class="font-bold text-white tracking-widest font-display text-2xl uppercase">Why is it $500 a month?</span>
-                    <i class="fa-solid fa-plus accordion-icon text-[var(--bandit-red)] transition-transform duration-300 text-xl"></i>
-                </button>
-                <div class="accordion-content max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out">
-                    <div class="px-8 pb-8 text-gray-400 text-sm leading-relaxed border-t border-gray-800 pt-6 font-mono font-light">
-                        This is not a Discord group where a guy posts random slips. You are leasing highly advanced, server-side infrastructure that scrapes data in milliseconds and automatically places bets on your behalf. It is a true algorithmic edge. High barrier to entry protects the edge from market saturation.
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel border border-gray-800 rounded overflow-hidden reveal delay-100 hover-target faq-container">
-                <button class="w-full px-8 py-6 text-left flex justify-between items-center focus:outline-none faq-btn transition-colors hover:bg-[rgba(255,255,255,0.02)]">
-                    <span class="font-bold text-white tracking-widest font-display text-2xl uppercase">Do I have to place the bets myself?</span>
-                    <i class="fa-solid fa-plus accordion-icon text-[var(--bandit-red)] transition-transform duration-300 text-xl"></i>
-                </button>
-                <div class="accordion-content max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out">
-                    <div class="px-8 pb-8 text-gray-400 text-sm leading-relaxed border-t border-gray-800 pt-6 font-mono font-light">
-                        No. With the Pro tier, the bot connects to platforms like PrizePicks. You set your base unit size and bankroll limits, and the AI will construct and place the slips completely hands-free while you sleep or work.
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel border border-gray-800 rounded overflow-hidden reveal delay-200 hover-target faq-container">
-                <button class="w-full px-8 py-6 text-left flex justify-between items-center focus:outline-none faq-btn transition-colors hover:bg-[rgba(255,255,255,0.02)]">
-                    <span class="font-bold text-white tracking-widest font-display text-2xl uppercase">What is the 30% Affiliate Program?</span>
-                    <i class="fa-solid fa-plus accordion-icon text-[var(--bandit-red)] transition-transform duration-300 text-xl"></i>
-                </button>
-                <div class="accordion-content max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out">
-                    <div class="px-8 pb-8 text-gray-400 text-sm leading-relaxed border-t border-gray-800 pt-6 font-mono font-light">
-                        Because our software is highly premium, the affiliate payouts are massive. If someone joins the Pro tier ($499.99) using your custom Whop link, you receive approximately $150 deposited directly to you, every single month they remain subscribed. Refer 3 people, and your bot is free.
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel border border-gray-800 rounded overflow-hidden reveal hover-target faq-container">
-                <button class="w-full px-8 py-6 text-left flex justify-between items-center focus:outline-none faq-btn transition-colors hover:bg-[rgba(255,255,255,0.02)]">
-                    <span class="font-bold text-white tracking-widest font-display text-2xl uppercase">Will my accounts get banned?</span>
-                    <i class="fa-solid fa-plus accordion-icon text-[var(--bandit-red)] transition-transform duration-300 text-xl"></i>
-                </button>
-                <div class="accordion-content max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out">
-                    <div class="px-8 pb-8 text-gray-400 text-sm leading-relaxed border-t border-gray-800 pt-6 font-mono font-light">
-                        Sportsbooks do limit winning players over time. However, the Bandit protocol uses randomized human-delay timers, API masking, and dynamic IP routing to dramatically extend the lifespan of your accounts compared to raw spam-betting.
-                    </div>
-                </div>
-            </div>
-            
-            <div class="glass-panel border border-gray-800 rounded overflow-hidden reveal delay-100 hover-target faq-container">
-                <button class="w-full px-8 py-6 text-left flex justify-between items-center focus:outline-none faq-btn transition-colors hover:bg-[rgba(255,255,255,0.02)]">
-                    <span class="font-bold text-white tracking-widest font-display text-2xl uppercase">Can I cancel if I don't like it?</span>
-                    <i class="fa-solid fa-plus accordion-icon text-[var(--bandit-red)] transition-transform duration-300 text-xl"></i>
-                </button>
-                <div class="accordion-content max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out">
-                    <div class="px-8 pb-8 text-gray-400 text-sm leading-relaxed border-t border-gray-800 pt-6 font-mono font-light">
-                        Yes. You manage your entire subscription through the Whop dashboard. There are no contracts. You can cancel your auto-renewal at any time with a single click.
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel border border-gray-800 rounded overflow-hidden reveal delay-200 hover-target faq-container">
-                <button class="w-full px-8 py-6 text-left flex justify-between items-center focus:outline-none faq-btn transition-colors hover:bg-[rgba(255,255,255,0.02)]">
-                    <span class="font-bold text-white tracking-widest font-display text-2xl uppercase">How much bankroll do I need?</span>
-                    <i class="fa-solid fa-plus accordion-icon text-[var(--bandit-red)] transition-transform duration-300 text-xl"></i>
-                </button>
-                <div class="accordion-content max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out">
-                    <div class="px-8 pb-8 text-gray-400 text-sm leading-relaxed border-t border-gray-800 pt-6 font-mono font-light">
-                        Given the $500 monthly overhead, we recommend a starting bankroll of at least $3,000 to $5,000 so the mathematical edge has enough capital to compound and easily cover the subscription cost while generating significant profit.
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<!-- REVIEWS -->
+<section id="reviews" class="py-28 relative overflow-hidden" style="background:var(--slab);">
+  <div class="cl absolute top-0 left-0 right-0"></div>
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-14 rv">
+      <div><div class="mn text-xs uppercase tracking-widest mb-3" style="color:var(--c2);">Declassified Intel</div><h3 class="font-bold leading-none uppercase" style="font-size:clamp(3rem,6vw,5.5rem);font-weight:700;line-height:.85;">OPERATOR<br/><span class="ct">LOGS.</span></h3></div>
+      <div class="mt-8 md:mt-0 glass px-8 py-4 flex items-center gap-4" style="border:1px solid rgba(0,245,255,0.22);"><div class="flex text-xl" style="color:#FBBF24;">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</div><div class="font-bold mn text-sm text-white">5.0 <span style="color:rgba(232,255,254,0.3);">/ WHOP VERIFIED</span></div></div>
     </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="card p-9 rv"><div class="text-5xl mb-6" style="color:rgba(232,255,254,0.04);">&#x201C;</div><div class="flex mb-5" style="color:#FBBF24;">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</div><p class="leading-loose mb-8 text-sm mn" style="color:rgba(232,255,254,0.65);">"I thought $500 a month was insane until I plugged in my PrizePicks account. The bot paid for its entire yearly subscription in the first 4 days. Full automation while I'm at my 9-5. Literally free money."</p><div class="flex items-center gap-4 pt-5" style="border-top:1px solid rgba(0,245,255,0.08);"><div class="w-11 h-11 flex items-center justify-center font-bold text-black text-lg" style="background:var(--cyan);font-weight:800;">MK</div><div><h5 class="font-bold text-white uppercase text-xl" style="font-weight:700;">Mike K.</h5><p class="mn text-[10px] uppercase tracking-widest mt-0.5" style="color:var(--c2);">Pro User</p></div></div></div>
+      <div class="card p-9 rv" style="border-color:rgba(0,245,255,0.35);box-shadow:0 0 40px rgba(0,245,255,0.07);transform:translateY(-6px);"><div class="absolute top-0 right-0 mn font-bold text-black text-[9px] px-4 py-2 uppercase tracking-widest" style="background:var(--cyan);">Whale Status</div><div class="text-5xl mb-6" style="color:rgba(0,245,255,0.06);">&#x201C;</div><div class="flex mb-5" style="color:#FBBF24;">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</div><p class="leading-loose mb-8 text-sm mn" style="color:rgba(232,255,254,0.65);">"The Kelly Criterion bankroll management is what makes this a 1% tool. Other bots blow your account on a bad variance streak. Bookie Bandit scales your sizing dynamically. Up 210 units this NBA season."</p><div class="flex items-center gap-4 pt-5" style="border-top:1px solid rgba(0,245,255,0.12);"><div class="w-11 h-11 flex items-center justify-center font-bold text-black text-lg" style="background:linear-gradient(135deg,var(--cyan),var(--grn));font-weight:800;">JP</div><div><h5 class="font-bold text-white uppercase text-xl" style="font-weight:700;">Jordan P.</h5><p class="mn text-[10px] uppercase tracking-widest mt-0.5" style="color:var(--wh);">Pro User</p></div></div></div>
+      <div class="card p-9 rv"><div class="text-5xl mb-6" style="color:rgba(232,255,254,0.04);">&#x201C;</div><div class="flex mb-5" style="color:#FBBF24;">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</div><p class="leading-loose mb-8 text-sm mn" style="color:rgba(232,255,254,0.65);">"Started in the Free Discord to see if it was legit. The free slips hit at a 68% rate. Upgraded to Pro immediately. The arbitrage scanner alone is worth the price tag. Pure mathematical dominance."</p><div class="flex items-center gap-4 pt-5" style="border-top:1px solid rgba(0,245,255,0.08);"><div class="w-11 h-11 flex items-center justify-center font-bold text-black text-lg" style="background:var(--c3);font-weight:800;">SJ</div><div><h5 class="font-bold text-white uppercase text-xl" style="font-weight:700;">Sarah J.</h5><p class="mn text-[10px] uppercase tracking-widest mt-0.5" style="color:var(--c2);">Pro User</p></div></div></div>
+      <div class="card p-9 rv hidden md:block"><div class="text-5xl mb-6" style="color:rgba(232,255,254,0.04);">&#x201C;</div><div class="flex mb-5" style="color:#FBBF24;">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</div><p class="leading-loose mb-8 text-sm mn" style="color:rgba(232,255,254,0.65);">"I run a syndicate. We moved our entire operation to the Bandit protocol. The sub-second scraping against Pinnacle lines gives us the edge we need. Absolutely ruthless algorithm."</p><div class="flex items-center gap-4 pt-5" style="border-top:1px solid rgba(232,255,254,0.05);"><div class="w-11 h-11 flex items-center justify-center font-bold text-white text-lg" style="background:var(--slab2);border:1px solid rgba(232,255,254,0.12);font-weight:800;">TC</div><div><h5 class="font-bold text-white uppercase text-xl" style="font-weight:700;">Tim C.</h5><p class="mn text-[10px] uppercase tracking-widest mt-0.5" style="color:rgba(232,255,254,0.3);">Syndicate Lead</p></div></div></div>
+      <div class="card p-9 rv hidden md:block"><div class="text-5xl mb-6" style="color:rgba(232,255,254,0.04);">&#x201C;</div><div class="flex mb-5" style="color:#FBBF24;">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</div><p class="leading-loose mb-8 text-sm mn" style="color:rgba(232,255,254,0.65);">"Referred 2 of my betting buddies using the 30% affiliate link. Now I'm getting $300 a month back from Whop, so my bot cost is essentially zero. Big brain move by the dev team."</p><div class="flex items-center gap-4 pt-5" style="border-top:1px solid rgba(232,255,254,0.05);"><div class="w-11 h-11 flex items-center justify-center font-bold text-white text-lg" style="background:var(--slab2);border:1px solid rgba(232,255,254,0.12);font-weight:800;">AL</div><div><h5 class="font-bold text-white uppercase text-xl" style="font-weight:700;">Alex L.</h5><p class="mn text-[10px] uppercase tracking-widest mt-0.5" style="color:rgba(232,255,254,0.3);">Pro User</p></div></div></div>
+      <div class="card p-9 rv hidden lg:block"><div class="text-5xl mb-6" style="color:rgba(232,255,254,0.04);">&#x201C;</div><div class="flex mb-5" style="color:#FBBF24;">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</div><p class="leading-loose mb-8 text-sm mn" style="color:rgba(232,255,254,0.65);">"If you're tired of tailing 'gurus' who delete their losing slips, get this bot. It's cold, calculating mathematics. It doesn't care about teams, only numbers. Easiest money printer online."</p><div class="flex items-center gap-4 pt-5" style="border-top:1px solid rgba(232,255,254,0.05);"><div class="w-11 h-11 flex items-center justify-center font-bold text-white text-lg" style="background:var(--slab2);border:1px solid rgba(0,245,255,0.2);font-weight:800;">EW</div><div><h5 class="font-bold text-white uppercase text-xl" style="font-weight:700;">Ethan W.</h5><p class="mn text-[10px] uppercase tracking-widest mt-0.5" style="color:rgba(232,255,254,0.3);">Pro User</p></div></div></div>
+    </div>
+  </div>
 </section>
 
-<footer class="bg-[#050505] pt-24 pb-12 border-t-2 border-[rgba(225,29,72,0.3)] relative overflow-hidden">
-    <div class="absolute inset-0 cyber-grid opacity-10 z-0"></div>
-
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
-            
-            <div class="lg:col-span-5">
-                <div class="flex items-center gap-4 mb-8 hover-target">
-                    <div class="w-14 h-14 rounded border border-[var(--bandit-red)] flex items-center justify-center bg-[#0a0a0a] shadow-[0_0_20px_rgba(225,29,72,0.2)]">
-                        <i class="fa-solid fa-robot text-[var(--bandit-red)] text-3xl"></i>
-                    </div>
-                    <span class="font-display font-bold text-white text-5xl tracking-widest uppercase">BOOKIE BANDIT</span>
-                </div>
-                <p class="text-gray-500 font-mono text-xs max-w-sm mb-10 leading-loose">
-                    The ultimate AI sports betting engine. We provide institutional-grade automation and strict mathematical edge to drain the sportsbooks. The house always wins, until now.
-                </p>
-                <div class="flex gap-5">
-                    <a href="#" class="w-12 h-12 rounded border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[var(--bandit-red)] hover:border-[var(--bandit-red)] hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] transition-all duration-300 hover-target text-xl"><i class="fa-brands fa-discord"></i></a>
-                    <a href="#" class="w-12 h-12 rounded border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[var(--bandit-red)] hover:border-[var(--bandit-red)] hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] transition-all duration-300 hover-target text-xl"><i class="fa-brands fa-twitter"></i></a>
-                </div>
-            </div>
-            
-            <div class="lg:col-span-3 lg:col-start-7">
-                <h4 class="font-display text-white text-2xl tracking-widest uppercase mb-8 border-b border-gray-800 pb-3">System Hub</h4>
-                <ul class="space-y-5 text-xs text-gray-400 font-mono uppercase tracking-wider">
-                    <li><a href="#protocol" class="hover:text-[var(--bandit-red)] transition-colors hover-target">> The Protocol</a></li>
-                    <li><a href="#terminal" class="hover:text-[var(--bandit-red)] transition-colors hover-target">> Live Terminal</a></li>
-                    <li><a href="#features" class="hover:text-[var(--bandit-red)] transition-colors hover-target">> Arsenal Features</a></li>
-                    <li><a href="#reviews" class="hover:text-[var(--bandit-red)] transition-colors hover-target">> Operator Logs</a></li>
-                    <li><a href="#pricing" class="hover:text-[var(--bandit-red)] transition-colors hover-target">> Activate Bot</a></li>
-                </ul>
-            </div>
-
-            <div class="lg:col-span-3">
-                <h4 class="font-display text-white text-2xl tracking-widest uppercase mb-8 border-b border-gray-800 pb-3">Legal Code</h4>
-                <ul class="space-y-5 text-xs text-gray-400 font-mono uppercase tracking-wider">
-                    <li><a href="#" class="hover:text-white transition-colors hover-target">> Terms of Service</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors hover-target">> Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors hover-target">> API Guidelines</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors hover-target">> Risk Disclaimer</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="border-t border-gray-900 pt-10 flex flex-col lg:flex-row justify-between items-center gap-8 text-center lg:text-left">
-            <p class="font-mono text-[10px] text-gray-500 tracking-[0.3em] uppercase">
-                &copy; 2026 BOOKIE BANDIT. ALL SYSTEMS OPERATIONAL.
-            </p>
-            <p class="text-[9px] text-gray-600 max-w-3xl leading-relaxed uppercase font-mono tracking-wider">
-                Sports betting involves substantial risk. Bookie Bandit provides software automation and mathematical data modeling, not guaranteed financial advice. Past performance of the algorithm does not guarantee future results. Please gamble responsibly and only risk capital you can afford to lose. If you have a gambling problem, call 1-800-GAMBLER.
-            </p>
-        </div>
+<!-- PRICING -->
+<section id="pricing" class="py-28 relative overflow-hidden" style="background:var(--obs);">
+  <div class="cl absolute top-0 left-0 right-0"></div>
+  <div class="absolute" style="width:700px;height:700px;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(0,245,255,0.04),transparent 65%);filter:blur(80px);pointer-events:none;"></div>
+  <div class="max-w-5xl mx-auto px-5 lg:px-8 relative z-10">
+    <div class="text-center mb-16 rv">
+      <div class="flex items-center justify-center gap-4 mb-5"><div class="h-px w-12" style="background:linear-gradient(90deg,transparent,var(--cyan));"></div><span class="mn text-xs uppercase tracking-widest" style="color:var(--c2);">Access Keys</span><div class="h-px w-12" style="background:linear-gradient(90deg,var(--cyan),transparent);"></div></div>
+      <h3 class="font-bold leading-none uppercase" style="font-size:clamp(3rem,7vw,6rem);font-weight:700;line-height:.85;">CONNECT TO <span class="ct">THE MAINFRAME</span></h3>
+      <p class="max-w-xl mx-auto mt-5 text-lg" style="color:rgba(232,255,254,0.4);">Stop guessing. Start automating. Choose your clearance level and let the algorithm do the heavy lifting.</p>
     </div>
+    <div class="grid md:grid-cols-2 gap-10">
+      <div class="rv" style="background:var(--slab);border:1px solid rgba(232,255,254,0.08);overflow:hidden;">
+        <div class="p-10 border-b" style="background:var(--slab2);border-color:rgba(232,255,254,0.06);"><div class="flex items-center justify-between mb-5"><h4 class="font-bold text-white uppercase tracking-widest text-3xl" style="font-weight:700;">Free Discord</h4><i class="fa-brands fa-discord text-3xl" style="color:rgba(232,255,254,0.3);"></i></div><p class="text-sm mb-8 leading-relaxed mn" style="color:rgba(232,255,254,0.4);">Test the waters. Join the community and get a taste of the Bandit's power.</p><div class="font-bold text-6xl text-white" style="font-weight:700;">FREE</div><div class="mn font-bold mt-2 uppercase tracking-widest text-[10px]" style="color:rgba(232,255,254,0.3);">Lifetime Access</div></div>
+        <div class="p-10"><ul class="space-y-5 mb-10 mn text-sm"><li class="flex items-start gap-3" style="color:rgba(232,255,254,0.55);"><span style="color:rgba(232,255,254,0.3);">&#x2713;</span> Access to the General Chat</li><li class="flex items-start gap-3" style="color:rgba(232,255,254,0.55);"><span style="color:rgba(232,255,254,0.3);">&#x2713;</span> 1-2 Free EV Slips per Week</li><li class="flex items-start gap-3" style="color:rgba(232,255,254,0.55);"><span style="color:rgba(232,255,254,0.3);">&#x2713;</span> Basic Sports Betting Education</li><li class="flex items-start gap-3 line-through opacity-30"><span>&#x2717;</span> Automated Bot Execution</li></ul><a href="https://whop.com/bookiebandit/free-discord-access-91-7a4f?a=digitalartlab" target="_blank" class="btn-g block text-center py-4 mn font-bold text-base uppercase tracking-wider" style="border-radius:2px;">ENTER THE LOBBY</a></div>
+      </div>
+      <div class="rv relative" style="background:var(--slab);border:2px solid var(--cyan);box-shadow:0 0 60px rgba(0,245,255,0.1);overflow:hidden;transform:translateY(-6px);">
+        <div class="absolute top-0 right-0 mn font-bold text-black text-[9px] px-6 py-2 uppercase tracking-widest" style="background:var(--cyan);">The Arsenal</div>
+        <div class="absolute top-0 left-0 right-0 h-0.5" style="background:var(--cyan);"></div>
+        <div class="p-10 border-b" style="background:rgba(0,245,255,0.03);border-color:rgba(0,245,255,0.15);"><div class="flex items-center justify-between mb-5"><h4 class="font-bold text-white uppercase tracking-widest text-3xl" style="font-weight:700;">Bookie Bandit Pro</h4><i class="fa-solid fa-robot text-3xl" style="color:var(--cyan);animation:pk 2s infinite;"></i></div><p class="text-sm mb-8 leading-relaxed mn" style="color:var(--c2);">The fully automated, institutional-grade AI betting engine.</p><div class="font-bold text-6xl text-white" style="font-weight:700;">$499.99</div><div class="mn font-bold mt-2 uppercase tracking-widest text-[10px]" style="color:var(--c2);">Billed Monthly</div></div>
+        <div class="p-10"><ul class="space-y-5 mb-10 mn text-sm"><li class="flex items-start gap-3 font-bold text-white"><span style="color:var(--cyan);">&#x26A1;</span> Full Bot Auto-Execution (PrizePicks, Underdog)</li><li class="flex items-start gap-3" style="color:rgba(232,255,254,0.65);"><span style="color:var(--grn);">&#x2713;</span> Dynamic Kelly Criterion Sizing</li><li class="flex items-start gap-3" style="color:rgba(232,255,254,0.65);"><span style="color:var(--grn);">&#x2713;</span> Sub-Second Live Arbitrage Scanner</li><li class="flex items-start gap-3" style="color:rgba(232,255,254,0.65);"><span style="color:var(--grn);">&#x2713;</span> VIP Direct Developer Support</li><li class="flex items-start gap-3 font-bold text-white"><span style="color:var(--cyan);">&#x25C6;</span> 30% Massive Affiliate Engine ($150/mo per ref)</li></ul><a href="https://whop.com/bookiebandit/bookie-bandit-pro?a=digitalartlab" target="_blank" class="btn-c block text-center py-4 mn font-bold text-xl uppercase tracking-wider text-black neon" style="border-radius:2px;">ACTIVATE THE BOT</a></div>
+      </div>
+    </div>
+    <div class="mt-14 text-center rv" style="border-top:1px solid rgba(232,255,254,0.06);padding-top:40px;"><a href="https://whop.com/bookiebandit?a=digitalartlab" target="_blank" class="mn text-sm font-bold uppercase tracking-widest hover:text-white transition-colors" style="color:var(--cyan);">&gt;&gt;&gt; Access the Main Terminal Hub &lt;&lt;&lt;</a></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-28 relative overflow-hidden" style="background:var(--slab);">
+  <div class="cl absolute top-0 left-0 right-0"></div>
+  <div class="max-w-4xl mx-auto px-5 lg:px-8 relative z-10">
+    <div class="text-center mb-14 rv"><h2 class="font-bold leading-none uppercase" style="font-size:clamp(2.5rem,5vw,4.5rem);font-weight:700;">Interrogation <span class="ct">(FAQ)</span></h2><div class="h-px w-24 mx-auto mt-5" style="background:var(--cyan);"></div></div>
+    <div class="space-y-3">
+      <div class="fq rv glass" style="border:1px solid var(--bord2);"><button class="ft w-full text-left px-7 py-6 flex items-center justify-between gap-4"><span class="font-bold text-white text-xl uppercase tracking-wide" style="font-weight:700;">Why is it $500 a month?</span><span class="fi w-7 h-7 flex items-center justify-center mn text-xl flex-shrink-0" style="background:rgba(0,245,255,0.08);color:var(--cyan);">+</span></button><div class="fb px-7"><p class="text-sm leading-relaxed pb-6 mn" style="color:rgba(232,255,254,0.5);">This is not a Discord group where a guy posts random slips. You are leasing highly advanced, server-side infrastructure that scrapes data in milliseconds and automatically places bets on your behalf. It is a true algorithmic edge. High barrier to entry protects the edge from market saturation.</p></div></div>
+      <div class="fq rv glass" style="border:1px solid var(--bord2);"><button class="ft w-full text-left px-7 py-6 flex items-center justify-between gap-4"><span class="font-bold text-white text-xl uppercase tracking-wide" style="font-weight:700;">Do I have to place the bets myself?</span><span class="fi w-7 h-7 flex items-center justify-center mn text-xl flex-shrink-0" style="background:rgba(0,245,255,0.08);color:var(--cyan);">+</span></button><div class="fb px-7"><p class="text-sm leading-relaxed pb-6 mn" style="color:rgba(232,255,254,0.5);">No. With the Pro tier, the bot connects to platforms like PrizePicks. You set your base unit size and bankroll limits, and the AI will construct and place the slips completely hands-free while you sleep or work.</p></div></div>
+      <div class="fq rv glass" style="border:1px solid var(--bord2);"><button class="ft w-full text-left px-7 py-6 flex items-center justify-between gap-4"><span class="font-bold text-white text-xl uppercase tracking-wide" style="font-weight:700;">What is the 30% Affiliate Program?</span><span class="fi w-7 h-7 flex items-center justify-center mn text-xl flex-shrink-0" style="background:rgba(0,245,255,0.08);color:var(--cyan);">+</span></button><div class="fb px-7"><p class="text-sm leading-relaxed pb-6 mn" style="color:rgba(232,255,254,0.5);">Because our software is highly premium, the affiliate payouts are massive. If someone joins the Pro tier ($499.99) using your custom Whop link, you receive approximately $150 deposited directly to you, every single month they remain subscribed. Refer 3 people, and your bot is free.</p></div></div>
+      <div class="fq rv glass" style="border:1px solid var(--bord2);"><button class="ft w-full text-left px-7 py-6 flex items-center justify-between gap-4"><span class="font-bold text-white text-xl uppercase tracking-wide" style="font-weight:700;">Will my accounts get banned?</span><span class="fi w-7 h-7 flex items-center justify-center mn text-xl flex-shrink-0" style="background:rgba(0,245,255,0.08);color:var(--cyan);">+</span></button><div class="fb px-7"><p class="text-sm leading-relaxed pb-6 mn" style="color:rgba(232,255,254,0.5);">Sportsbooks do limit winning players over time. However, the Bandit protocol uses randomized human-delay timers, API masking, and dynamic IP routing to dramatically extend the lifespan of your accounts compared to raw spam-betting.</p></div></div>
+      <div class="fq rv glass" style="border:1px solid var(--bord2);"><button class="ft w-full text-left px-7 py-6 flex items-center justify-between gap-4"><span class="font-bold text-white text-xl uppercase tracking-wide" style="font-weight:700;">Can I cancel if I don't like it?</span><span class="fi w-7 h-7 flex items-center justify-center mn text-xl flex-shrink-0" style="background:rgba(0,245,255,0.08);color:var(--cyan);">+</span></button><div class="fb px-7"><p class="text-sm leading-relaxed pb-6 mn" style="color:rgba(232,255,254,0.5);">Yes. You manage your entire subscription through the Whop dashboard. There are no contracts. You can cancel your auto-renewal at any time with a single click.</p></div></div>
+      <div class="fq rv glass" style="border:1px solid var(--bord2);"><button class="ft w-full text-left px-7 py-6 flex items-center justify-between gap-4"><span class="font-bold text-white text-xl uppercase tracking-wide" style="font-weight:700;">How much bankroll do I need?</span><span class="fi w-7 h-7 flex items-center justify-center mn text-xl flex-shrink-0" style="background:rgba(0,245,255,0.08);color:var(--cyan);">+</span></button><div class="fb px-7"><p class="text-sm leading-relaxed pb-6 mn" style="color:rgba(232,255,254,0.5);">Given the $500 monthly overhead, we recommend a starting bankroll of at least $3,000 to $5,000 so the mathematical edge has enough capital to compound and easily cover the subscription cost while generating significant profit.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-16" style="background:#020406;border-top:2px solid rgba(0,245,255,0.15);">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="grid md:grid-cols-2 lg:grid-cols-12 gap-12 mb-14">
+      <div class="lg:col-span-5"><div class="flex items-center gap-4 mb-6"><div class="w-12 h-12 flex items-center justify-center neon" style="border:1px solid rgba(0,245,255,0.4);background:rgba(0,245,255,0.06);"><i class="fa-solid fa-robot text-2xl" style="color:var(--cyan);"></i></div><div class="font-bold text-white uppercase tracking-widest text-2xl" style="font-weight:700;">BOOKIE BANDIT</div></div><p class="mn text-xs max-w-sm mb-8 leading-loose" style="color:rgba(232,255,254,0.3);">The ultimate AI sports betting engine. Institutional-grade automation and strict mathematical edge to drain the sportsbooks. The house always wins, until now.</p></div>
+      <div class="lg:col-span-3 lg:col-start-7"><h4 class="font-bold text-white uppercase tracking-widest text-xl mb-6 pb-3" style="font-weight:700;border-bottom:1px solid rgba(232,255,254,0.06);">System Hub</h4><ul class="space-y-4 mn text-xs uppercase tracking-wider" style="color:rgba(232,255,254,0.4);"><li><a href="#about" class="hover:text-white transition-colors">&gt; The Protocol</a></li><li><a href="#features" class="hover:text-white transition-colors">&gt; Arsenal Features</a></li><li><a href="#reviews" class="hover:text-white transition-colors">&gt; Operator Logs</a></li><li><a href="#pricing" class="hover:text-white transition-colors">&gt; Activate Bot</a></li><li><a href="https://whop.com/bookiebandit?a=digitalartlab" class="hover:text-white transition-colors">&gt; Hub Login</a></li></ul></div>
+      <div class="lg:col-span-3"><h4 class="font-bold text-white uppercase tracking-widest text-xl mb-6 pb-3" style="font-weight:700;border-bottom:1px solid rgba(232,255,254,0.06);">Legal Code</h4><ul class="space-y-4 mn text-xs uppercase tracking-wider" style="color:rgba(232,255,254,0.4);"><li><a href="#" class="hover:text-white transition-colors">&gt; Terms of Service</a></li><li><a href="#" class="hover:text-white transition-colors">&gt; Privacy Policy</a></li><li><a href="#" class="hover:text-white transition-colors">&gt; API Guidelines</a></li><li><a href="#" class="hover:text-white transition-colors">&gt; Risk Disclaimer</a></li></ul></div>
+    </div>
+    <div class="border-t pt-8 flex flex-col lg:flex-row justify-between items-center gap-6" style="border-color:rgba(232,255,254,0.04);">
+      <p class="mn text-[10px] uppercase tracking-[.3em]" style="color:rgba(232,255,254,0.25);">&#xA9; 2026 BOOKIE BANDIT. ALL SYSTEMS OPERATIONAL.</p>
+      <p class="mn text-[9px] max-w-2xl text-center leading-relaxed uppercase tracking-wider" style="color:rgba(232,255,254,0.18);">Sports betting involves substantial risk. Bookie Bandit provides software automation and mathematical data modeling, not guaranteed financial advice. Past performance of the algorithm does not guarantee future results. Please gamble responsibly and only risk capital you can afford to lose. If you have a gambling problem, call 1-800-GAMBLER.</p>
+    </div>
+  </div>
 </footer>
 
-<canvas id="matrix-canvas" class="fixed top-0 left-0 w-full h-full z-[-3] opacity-[0.03] pointer-events-none"></canvas>
-
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        // --- 1. Matrix Rain Background (Adds heavy code & aesthetic value) ---
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/%'.split('');
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        
-        for (let i = 0; i < columns; i++) {
-            drops[i] = Math.random() * -100; // Start at random negative offsets
-        }
-        
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#e11d48'; // Bandit Red
-            ctx.font = fontSize + 'px monospace';
-            
-            for (let i = 0; i < drops.length; i++) {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 33);
-        
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // --- 2. Custom Cursor Logic (Crosshair) ---
-        const cursorDot = document.getElementById('cursor-dot');
-        const cursorCrosshair = document.getElementById('cursor-crosshair');
-        const hoverElements = document.querySelectorAll('.hover-target, a, button, tr');
-
-        if (window.matchMedia("(min-width: 1024px)").matches) {
-            window.addEventListener('mousemove', (e) => {
-                const posX = e.clientX;
-                const posY = e.clientY;
-                cursorDot.style.left = `${posX}px`;
-                cursorDot.style.top = `${posY}px`;
-                cursorCrosshair.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 100, fill: "forwards" });
-            });
-            
-            hoverElements.forEach(el => {
-                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-            });
-        }
-
-        // --- 3. Mobile Menu Toggle ---
-        const hb = document.getElementById('menu-btn');
-        const mm = document.getElementById('mobile-menu');
-        const ml = mm.querySelectorAll('a');
-
-        function tog(fc = false) {
-            const o = mm.classList.contains('hidden');
-            if (fc || !o) {
-                mm.classList.add('hidden');
-                mm.classList.remove('flex');
-            } else {
-                mm.classList.remove('hidden');
-                mm.classList.add('flex');
-            }
-        }
-        hb.addEventListener('click', () => tog());
-        ml.forEach(l => l.addEventListener('click', () => tog(true)));
-
-        // --- 4. Navbar Scroll Glassmorphism ---
-        const nav = document.getElementById('navbar');
-        const innerNav = nav.querySelector('.glass-panel');
-        
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 40) {
-                nav.classList.add('bg-[rgba(5,5,5,0.95)]', 'backdrop-blur-3xl', 'border-b', 'border-[rgba(225,29,72,0.3)]', 'shadow-[0_10px_50px_rgba(0,0,0,0.9)]');
-                nav.style.top = '28px'; // Keep below system logs
-                if(innerNav) {
-                    innerNav.classList.remove('glass-panel', 'border', 'px-6', 'py-3', 'rounded-xl');
-                    innerNav.classList.add('bg-transparent', 'border-transparent', 'py-2');
-                }
-            } else {
-                nav.classList.remove('bg-[rgba(5,5,5,0.95)]', 'backdrop-blur-3xl', 'border-b', 'border-[rgba(225,29,72,0.3)]', 'shadow-[0_10px_50px_rgba(0,0,0,0.9)]');
-                nav.style.top = '28px';
-                if(innerNav) {
-                    innerNav.classList.add('glass-panel', 'border', 'px-6', 'py-3', 'rounded-xl');
-                    innerNav.classList.remove('bg-transparent', 'border-transparent', 'py-2');
-                }
-            }
-        });
-
-        // --- 5. Intersection Observer (Scroll Reveals) ---
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target); 
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-        
-        setTimeout(() => {
-            document.querySelectorAll('.reveal:not(.active)').forEach(el => {
-                if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('active');
-            });
-        }, 500);
-
-        // --- 6. Advanced FAQ Accordion Logic ---
-        const faqButtons = document.querySelectorAll('.faq-btn');
-        faqButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const content = this.nextElementSibling;
-                const icon = this.querySelector('.accordion-icon');
-                const container = this.closest('.faq-container');
-                const isOpen = content.classList.contains('opacity-100');
-
-                // Close all existing open tabs
-                document.querySelectorAll('.accordion-content').forEach(c => {
-                    c.style.maxHeight = null; c.classList.remove('opacity-100'); c.classList.add('opacity-0');
-                });
-                document.querySelectorAll('.accordion-icon').forEach(i => {
-                    i.classList.remove('rotate-45', 'text-[var(--bandit-red)]');
-                });
-                document.querySelectorAll('.faq-container').forEach(c => {
-                    c.classList.remove('border-[var(--bandit-red)]');
-                });
-
-                // Open the clicked tab if it wasn't open
-                if (!isOpen) {
-                    container.classList.add('border-[var(--bandit-red)]');
-                    content.classList.remove('opacity-0'); 
-                    content.classList.add('opacity-100');
-                    content.style.maxHeight = content.scrollHeight + "px";
-                    icon.classList.add('rotate-45', 'text-[var(--bandit-red)]');
-                }
-            });
-        });
-    });
+(function(){
+  const c=document.getElementById("mx"),x=c.getContext("2d");
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  window.addEventListener("resize",()=>{c.width=window.innerWidth;c.height=window.innerHeight;});
+  const ch="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*#@!%&".split(""),fs=14,cols=Math.floor(c.width/fs),dr=[];
+  for(let i=0;i<cols;i++)dr[i]=Math.random()*-100;
+  function draw(){x.fillStyle="rgba(3,5,8,0.05)";x.fillRect(0,0,c.width,c.height);x.fillStyle="#00F5FF";x.font=fs+"px monospace";for(let i=0;i<dr.length;i++){const t=ch[Math.floor(Math.random()*ch.length)];x.fillText(t,i*fs,dr[i]*fs);if(dr[i]*fs>c.height&&Math.random()>.975)dr[i]=0;dr[i]++;}}
+  setInterval(draw,50);
+})();
+const cd=document.getElementById("cdot"),cr=document.getElementById("cring");
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;cd.style.left=mx+"px";cd.style.top=my+"px";});
+(function lag(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cr.style.left=rx+"px";cr.style.top=ry+"px";requestAnimationFrame(lag);})();
+document.querySelectorAll("a,button").forEach(el=>{el.addEventListener("mouseenter",()=>document.body.classList.add("hov"));el.addEventListener("mouseleave",()=>document.body.classList.remove("hov"));});
+const nav=document.getElementById("nb");
+window.addEventListener("scroll",()=>nav.classList.toggle("on",window.scrollY>60));
+const ham=document.getElementById("ham"),mnav=document.getElementById("mnav"),hls=ham.querySelectorAll(".hl");
+let open=false;
+ham.addEventListener("click",()=>{open=!open;mnav.classList.toggle("open",open);document.body.style.overflow=open?"hidden":"";hls[0].style.transform=open?"rotate(45deg) translateY(8px)":"";hls[1].style.opacity=open?"0":"1";hls[2].style.transform=open?"rotate(-45deg) translateY(-6px)":"";hls[2].style.width=open?"24px":"16px";});
+document.querySelectorAll(".ml").forEach(l=>l.addEventListener("click",()=>{open=false;mnav.classList.remove("open");document.body.style.overflow="";hls.forEach(h=>{h.style.transform="";h.style.opacity="";h.style.width="";});}));
+const hh=document.getElementById("hh");
+if(hh){hh.style.cssText="opacity:0;transform:translateX(-40px)";setTimeout(()=>{hh.style.transition="all 1s cubic-bezier(0.16,1,0.3,1)";hh.style.opacity="1";hh.style.transform="translateX(0)";},300);}
+function odo(el,t,s,d){const t0=performance.now();(function r(now){const p=Math.min((now-t0)/d,1),e=1-Math.pow(1-p,3),v=Math.floor(e*t);el.textContent=v+(s||"");if(p<1)requestAnimationFrame(r);})(t0);}
+const oO=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target;odo(el,parseInt(el.dataset.t),el.dataset.s||"",2000);oO.unobserve(el);});},{threshold:.6});
+document.querySelectorAll(".od[data-t]").forEach(el=>oO.observe(el));
+const rO=new IntersectionObserver(es=>{es.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add("in"),i*70);rO.unobserve(e.target);}});},{threshold:.06,rootMargin:"0px 0px -40px 0px"});
+document.querySelectorAll(".rv,.rvr,.rvl").forEach(el=>rO.observe(el));
+document.querySelectorAll(".ft").forEach(btn=>{btn.addEventListener("click",()=>{const item=btn.closest(".fq"),body=item.querySelector(".fb"),icon=item.querySelector(".fi"),was=body.classList.contains("open");document.querySelectorAll(".fb").forEach(b=>b.classList.remove("open"));document.querySelectorAll(".fi").forEach(i=>{i.textContent="+";i.classList.remove("open");});if(!was){body.classList.add("open");icon.textContent="x";icon.classList.add("open");}});});
+document.querySelectorAll("a[href^='#']").forEach(a=>{a.addEventListener("click",e=>{const t=document.querySelector(a.getAttribute("href"));if(t){e.preventDefault();window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-68,behavior:"smooth"});}});});
 </script>
 </body>
 </html>
